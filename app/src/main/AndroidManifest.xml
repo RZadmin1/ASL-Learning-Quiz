@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.P2_rzaman9">
         <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuestionActivity"
             android:exported="false" />
         <activity
