@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">p2_rzaman9</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="full_app_title">American Sign Language Learing Quiz</string>
+    <string name="quiz_title_lesson_1">Lesson 1</string>
+    <string name="start_quiz">Start Quiz</string>
+    <string name="resume_current_attempt">Resume Current Attempt</string>
+    <string name="view_records">View Your Quiz Records</string>
+    <string name="asl_quiz_records">ASL Quiz Records</string>
+    <string name="records_page_desc">This is the list of your quiz attempt scores.\n To delete one of your attempt\'s record, hold down on an item to delete it.</string>
+    <string name="delete_all_records">Delete All Records</string>
+    <string name="return_to_home_screen">Return to Home Screen</string>
+    <string name="next_question">Next\nQuestion</string>
+    <string name="previous_question">Previous\nQuestion</string>
+    <string name="question">Question</string>
+</resources>
