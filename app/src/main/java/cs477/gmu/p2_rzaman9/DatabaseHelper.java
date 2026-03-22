@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper instance;
     final private static String QUIZ_DB_NAME = "asl_quiz_db";
     final static String _ID = "_id";
-    final private static Integer VERSION = 2;
+    final private static Integer VERSION = 3;
 
     final private Context context;
     final private String quizDataFile;
@@ -92,11 +92,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s TEXT NOT NULL, " +  // video
                         "%s INTEGER NOT NULL, " +  // order_num
                         "%s INTEGER NOT NULL, " +  // correct_index
-                        "FOREIGN KEY (%s) REFERENCES %s(id))",  // QUIZZES_TABLE
+                        "FOREIGN KEY (%s) REFERENCES %s(%s))",  // QUIZZES_TABLE
                 QUESTIONS_TABLE, _ID,
                 questionColumns[0], questionColumns[1], questionColumns[2],
                 questionColumns[3], questionColumns[4], questionColumns[0],
-                QUIZZES_TABLE
+                QUIZZES_TABLE, _ID
         ));
 
         db.execSQL(String.format(
@@ -105,10 +105,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s INTEGER NOT NULL, " +  // question_id
                         "%s INTEGER NOT NULL, " +  // option_index
                         "%s TEXT NOT NULL, " +  // answer_text
-                        "FOREIGN KEY (%s) REFERENCES %s(id))",  // QUESTIONS_TABLE
+                        "FOREIGN KEY (%s) REFERENCES %s(%s))",  // QUESTIONS_TABLE
                 ANSWERS_TABLE, _ID,
                 optionColumns[0], optionColumns[1], optionColumns[2], optionColumns[0],
-                QUESTIONS_TABLE
+                QUESTIONS_TABLE, _ID
         ));
 
         db.execSQL(String.format(
@@ -119,11 +119,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s INTEGER NOT NULL, " +  // total
                         "%s TEXT NOT NULL, " +  // date
                         "%s TEXT NOT NULL, " +  // time
-                        "FOREIGN KEY (%s) REFERENCES %s(id))",  // QUIZZES_TABLE
+                        "FOREIGN KEY (%s) REFERENCES %s(%s))",  // QUIZZES_TABLE
                 RECORDS_TABLE, _ID,
                 recordColumns[0], recordColumns[1], recordColumns[2],
                 recordColumns[3], recordColumns[4], recordColumns[0],
-                QUIZZES_TABLE
+                QUIZZES_TABLE, _ID
         ));
 
         db.execSQL(String.format(
@@ -306,6 +306,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(ANSWERS_TABLE, null, null);
         db.delete(QUESTIONS_TABLE, null, null);
         db.delete(QUIZZES_TABLE, null, null);
+        db.delete(SELECTIONS_TABLE, null, null);
     }
 
     private int getQuestionCount(SQLiteDatabase db, long quizId) {
