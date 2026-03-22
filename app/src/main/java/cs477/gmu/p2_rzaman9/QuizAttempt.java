@@ -5,7 +5,7 @@ import java.io.Serializable;
 // Implement Serializable to let it to pass between activities through Intents / savedInstanceState
 public class QuizAttempt implements Serializable {
 
-    private final int quizId;  // Quiz ID in the DATABASE
+    private final long quizId;  // Quiz ID in the DATABASE
     private boolean submitted = false;
     private int currentQuestion = 1;
     private int score;
@@ -13,11 +13,11 @@ public class QuizAttempt implements Serializable {
     private final int totalQuestions;
 
 
-    public QuizAttempt(int quizId, int totalQuestions) {
+    public QuizAttempt(long quizId, int totalQuestions) {
         this.quizId = quizId;
         this.totalQuestions = totalQuestions;
     }
-    public QuizAttempt(int quizId, int totalQuestions, int score) {
+    public QuizAttempt(long quizId, int totalQuestions, int score) {
         this(quizId, totalQuestions);
         this.score = score;
         this.submitted = true;
@@ -43,7 +43,7 @@ public class QuizAttempt implements Serializable {
     }
 
 
-    public int getId() {
+    public long getId() {
         return this.quizId;
     }
     public boolean isSubmitted() {

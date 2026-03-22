@@ -235,7 +235,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param time A String representation of the time of the attempt
      */
     private void recordScoreIntoDB(
-            SQLiteDatabase db, int quizId, int score, int total, String date, String time) {
+            SQLiteDatabase db, long quizId, int score, int total, String date, String time) {
         ContentValues qVals = new ContentValues();
         qVals.put(recordColumns[0], quizId);
         qVals.put(recordColumns[1], score);
@@ -258,7 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (cursor.moveToFirst()) {
-            int quizId = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
+            long quizId = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
             int currentQuestion = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[2]));
             cursor.close();
@@ -323,7 +323,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param quizId The database ID of the quiz to retrieve questions for
      * @return An ArrayList of Question objects
      */
-    public List<Question> getQuestionsForQuiz(int quizId) {
+    public List<Question> getQuestionsForQuiz(long quizId) {
         List<Question> questions = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
 
@@ -340,7 +340,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         while (qCursor.moveToNext()) {
-            int id = qCursor.getInt(qCursor.getColumnIndexOrThrow(_ID));
+            long id = qCursor.getInt(qCursor.getColumnIndexOrThrow(_ID));
             String text = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[1]));
             String video = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[2]));
             int orderNum = qCursor.getInt(qCursor.getColumnIndexOrThrow(questionColumns[3]));
@@ -380,7 +380,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // METHODS FOR SAVING ANSWER SELECTION FOR IN-PROGRESS QUIZZES
-    public void saveSelection(int quizId, int questionId, int selectedIndex) {
+    public void saveSelection(long quizId, long questionId, int selectedIndex) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues vals = new ContentValues();
         vals.put(selectionColumns[0], quizId);
@@ -395,7 +395,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param quizId The ID of the quiz attempt to retrieve data for
      * @return Map of the selected indexes and their associated question IDs
      */
-    public Map<Integer, Integer> loadSelections(int quizId) {
+    public Map<Integer, Integer> loadSelections(long quizId) {
         Map<Integer, Integer> selections = new HashMap<>();
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.query(SELECTIONS_TABLE,
@@ -418,7 +418,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param quizId The ID of the quiz attempt being taken
      * @param currentQuestion The current question index
      */
-    public void saveCurrentQuestion(int quizId, int currentQuestion) {
+    public void saveCurrentQuestion(long quizId, int currentQuestion) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues vals = new ContentValues();
         vals.put(quizzesColumns[2], currentQuestion);
