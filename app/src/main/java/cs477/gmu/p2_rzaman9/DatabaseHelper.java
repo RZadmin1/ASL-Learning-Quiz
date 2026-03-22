@@ -258,7 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public QuizAttempt createNewAttempt() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(QUIZZES_TABLE,
-                new String[]{_ID, quizzesColumns[1]},  // id, num_questions
+                new String[]{_ID, quizzesColumns[1]},  // _ID, num_questions
                 null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
@@ -266,7 +266,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
             cursor.close();
 
-            // Reset submitted to 0 in case a previous attempt was completed
             SQLiteDatabase wDb = getWritableDatabase();
             ContentValues vals = new ContentValues();
             vals.put(quizzesColumns[2], 0);  // submitted = false

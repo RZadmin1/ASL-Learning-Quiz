@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String QUIZ = "ASL Basics: Lesson 1 Quiz";
 
     // BUTTONS
-    private Button startBtn, resumeBtn, recordsBtn;
+    private Button resumeBtn;
 
     // QUIZ ATTEMPT (For transferring to Quiz activity)
     private QuizAttempt currentAttempt = null;
@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        startBtn = findViewById(R.id.startButton);
         resumeBtn = findViewById(R.id.resumeButton);
-        recordsBtn = findViewById(R.id.recordsButton);
 
         if (savedInstanceState != null) {
             currentAttempt = (QuizAttempt)savedInstanceState.getSerializable(CURRENT_ATTEMPT);
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onResumeButtonClicked(View view) {
-//        if (currentAttempt != null) { launchQuizActivity(); }
+        if (currentAttempt != null) { launchQuizActivity(); }
     }
 
     public void onRecordsButtonClicked(View view) {
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void startNewQuiz() {
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
-        currentAttempt = dbHelper.createNewAttempt();  // Creates QuizAttempt, marks quiz as in-progress in DB
+        currentAttempt = dbHelper.createNewAttempt();
         launchQuizActivity();
     }
 }
