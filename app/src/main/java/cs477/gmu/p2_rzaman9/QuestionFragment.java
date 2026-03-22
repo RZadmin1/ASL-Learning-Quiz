@@ -1,64 +1,119 @@
 package cs477.gmu.p2_rzaman9;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link QuestionFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
+
 public class QuestionFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    // UI ELEMENTS
+    private TextView questionText;
+    private RadioGroup answerGroup;
+    private RadioButton option1, option2, option3, option4;
+    private Button prevButton, nextButton;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private QuestionActivity host;
 
     public QuestionFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuestionFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static QuestionFragment newInstance(String param1, String param2) {
-        QuestionFragment fragment = new QuestionFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        host = (QuestionActivity) context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_question, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        questionText = view.findViewById(R.id.questionText);
+        answerGroup = view.findViewById(R.id.answerSelection);
+        option1 = view.findViewById(R.id.option1);
+        option2 = view.findViewById(R.id.option2);
+        option3 = view.findViewById(R.id.option3);
+        option4 = view.findViewById(R.id.option4);
+        prevButton = view.findViewById(R.id.prevButton);
+        nextButton = view.findViewById(R.id.nextButton);
+
+        // Listeners defined in QuestionActivity to stay organized
+        prevButton.setOnClickListener(v -> host.onPrevClicked());
+        nextButton.setOnClickListener(v -> host.onNextClicked());
+
+        answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            int selectedIndex = getIndexForId(checkedId);
+            if (selectedIndex >= 0) {
+                host.onAnswerSelected(selectedIndex);
+            }
+        });
+    }
+
+    // Called by QuestionActivity to populate the fragmentUI
+    void displayQuestion(Question q, int index, int total, int savedSelection) {
+        questionText.setText(q.getQuestionText());
+
+        List<String> options = q.getOptions();
+        option1.setText(options.get(0));
+        option2.setText(options.get(1));
+        option3.setText(options.get(2));
+        option4.setText(options.get(3));
+
+        // Restore prior selection without triggering the listener
+        answerGroup.setOnCheckedChangeListener(null);
+        if (savedSelection >= 0) {
+            int restoredId = getIdForIndex(savedSelection);
+            answerGroup.check(restoredId);
+        } else {
+            answerGroup.clearCheck();
+        }
+        answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            int selectedIndex = getIndexForId(checkedId);
+            if (selectedIndex >= 0) host.onAnswerSelected(selectedIndex);
+        });
+
+        // Update navigation buttons
+        prevButton.setVisibility(index > 0 ? View.VISIBLE : View.INVISIBLE);
+        nextButton.setText(index == total - 1 ? "Submit" : "Next");
+    }
+
+
+    // HELPER METHODS
+    private int getIdForIndex(int index) {
+        switch (index) {
+            case 0: return R.id.option1;
+            case 1: return R.id.option2;
+            case 2: return R.id.option3;
+            case 3: return R.id.option4;
+            default: return -1;
+        }
+    }
+
+    private int getIndexForId(int id) {
+        if (id == R.id.option1) return 0;
+        if (id == R.id.option2) return 1;
+        if (id == R.id.option3) return 2;
+        if (id == R.id.option4) return 3;
+        return -1;
     }
 }
