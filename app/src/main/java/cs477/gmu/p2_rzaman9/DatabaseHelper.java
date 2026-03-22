@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper instance;
     final private static String QUIZ_DB_NAME = "asl_quiz_db";
     final static String _ID = "_id";
-    final private static Integer VERSION = 1;
+    final private static Integer VERSION = 5;
 
     final private Context context;
     final private String quizDataFile;
@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     final static String ANSWERS_TABLE = "answers";
     final static String RECORDS_TABLE = "records";
 
-    final static String[] quizzesColumns = {"title", "num_questions", "submitted"};
+    final static String[] quizzesColumns = {"title", "num_questions", "current_question", "submitted"};
     final static String[] questionColumns = {"quiz_id", "question_text", "video", "order_num", "correct_index"};
     final static String[] optionColumns = {"question_id", "option_index", "answer_text"};
     final static String[] recordColumns = {"quiz_id", "score", "total", "date", "time"};
@@ -72,10 +72,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +  // _ID
                         "%s TEXT NOT NULL, " +  // title
                         "%s INTEGER NOT NULL, " +  // num_questions
+                        "%s INTEGER NOT NULL DEFAULT 1, " +  // current_question
                         "%s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0, 1)))",  // submitted
                         // *****  0=FALSE, 1=TRUE  ***** //
                 QUIZZES_TABLE, _ID,
-                quizzesColumns[0], quizzesColumns[1], quizzesColumns[2], quizzesColumns[2]
+                quizzesColumns[0], quizzesColumns[1], quizzesColumns[2],
+                quizzesColumns[3], quizzesColumns[3]
         ));
 
         db.execSQL(String.format(
@@ -152,7 +154,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContentValues quizVals = new ContentValues();
                 quizVals.put(quizzesColumns[0], quizObj.getString("title"));
                 quizVals.put(quizzesColumns[1], quizObj.getJSONArray("questions").length());
-                quizVals.put(quizzesColumns[2], 0);  // submitted = 0 (FALSE)
+                quizVals.put(quizzesColumns[2], 1);  // Start at question 1
+                quizVals.put(quizzesColumns[3], 0);  // submitted = 0 (FALSE)
                 long quizId = db.insert(QUIZZES_TABLE, null, quizVals);
 
                 JSONArray questions = quizObj.getJSONArray("questions");
@@ -237,15 +240,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public QuizAttempt getInProgressAttempt() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(QUIZZES_TABLE,
-                new String[]{_ID, quizzesColumns[1]},  // id, num_questions
-                quizzesColumns[2] + " = 0",            // WHERE submitted = 0
+                new String[]{_ID, quizzesColumns[1], quizzesColumns[2]},  // id, num_questions
+                quizzesColumns[3] + " = 0",            // WHERE submitted = 0
                 null, null, null, null);
 
         if (cursor.moveToFirst()) {
             int quizId = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
+            int currentQuestion = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[2]));
             cursor.close();
-            return new QuizAttempt(quizId, numQuestions);
+            QuizAttempt q = new QuizAttempt(quizId, numQuestions);
+            q.setCurrentQuestion(currentQuestion);
+            return q;
         }
         cursor.close();
         return null;
@@ -268,7 +274,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             SQLiteDatabase wDb = getWritableDatabase();
             ContentValues vals = new ContentValues();
-            vals.put(quizzesColumns[2], 0);  // submitted = false
+            vals.put(quizzesColumns[3], 0);  // submitted = false
             wDb.update(QUIZZES_TABLE, vals, _ID + " = ?", new String[]{String.valueOf(quizId)});
 
             return new QuizAttempt(quizId, numQuestions);
