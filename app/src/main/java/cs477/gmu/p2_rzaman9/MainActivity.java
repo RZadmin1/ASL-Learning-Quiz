@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String CURRENT_ATTEMPT = "currentAttempt";
 
 
-    private final String TAG = "MainActivity";  // For debugging
+    private final String TAG = "MainActivity";  // For debugging/error messages
 
 
     @Override
@@ -109,5 +109,9 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
         currentAttempt = dbHelper.createNewAttempt();
         launchQuizActivity();
+    }
+    private void discardCurrentQuiz() {
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
+        // TODO...
     }
 }

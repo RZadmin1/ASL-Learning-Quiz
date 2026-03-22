@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper instance;
     final private static String QUIZ_DB_NAME = "asl_quiz_db";
     final static String _ID = "_id";
-    final private static Integer VERSION = 5;
+    final private static Integer VERSION = 1;
 
     final private Context context;
     final private String quizDataFile;
@@ -121,8 +121,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 recordColumns[3], recordColumns[4], recordColumns[0],
                 QUIZZES_TABLE
         ));
-
-        fillData(db);
     }
 
 
@@ -262,20 +260,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return QuizAttempt object with the relevant data that was inserted into the database
      */
     public QuizAttempt createNewAttempt() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(QUIZZES_TABLE,
-                new String[]{_ID, quizzesColumns[1]},  // _ID, num_questions
+        SQLiteDatabase wDb = getWritableDatabase();
+        fillData(wDb);  // Fill data from .json file into DB
+
+        SQLiteDatabase rDb = getReadableDatabase();
+
+        // _ID, title, num_questions, current_question, submitted
+        Cursor cursor = rDb.query(QUIZZES_TABLE,
+                new String[]{_ID, quizzesColumns[1]},
                 null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             int quizId = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
             cursor.close();
-
-            SQLiteDatabase wDb = getWritableDatabase();
-            ContentValues vals = new ContentValues();
-            vals.put(quizzesColumns[3], 0);  // submitted = false
-            wDb.update(QUIZZES_TABLE, vals, _ID + " = ?", new String[]{String.valueOf(quizId)});
 
             return new QuizAttempt(quizId, numQuestions);
         }
