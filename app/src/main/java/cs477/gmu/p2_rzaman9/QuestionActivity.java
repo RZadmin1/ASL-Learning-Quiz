@@ -106,7 +106,7 @@ public class QuestionActivity extends AppCompatActivity {
         displayQuestion(currentIndex);
 
 
-        // Handle back button being pressed (TODO: NOT WORKING)
+        // Handle back button being pressed
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -120,13 +120,8 @@ public class QuestionActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("Keep Going", null)
                         .show();
-                // To mimic super.onBackPressed(), use:
-                setEnabled(false);
-                getOnBackPressedDispatcher().onBackPressed();
-                setEnabled(true);
             }
         };
-
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
