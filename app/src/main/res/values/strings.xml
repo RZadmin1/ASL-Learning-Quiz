@@ -15,4 +15,7 @@
     <string name="previous_question">Back</string>
     <string name="submit_quiz">Submit</string>
     <string name="question">Question</string>
+    <string name="quiz_complete">Quiz Complete!</string>
+    <string name="review_questions">Review Questions</string>
+    <string name="score_label">Score:</string>
 </resources>
