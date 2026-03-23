@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private QuizAttempt currentAttempt = null;
 
     // FOR SAVING VALUES DURING APP UPDATE/ROTATING & SENDING VIA INTENT
-    private static final String CURRENT_ATTEMPT = "currentAttempt";
+    private static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
 
 
     private final String TAG = "MainActivity";  // For debugging/error messages
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         resumeBtn = findViewById(R.id.resumeButton);
 
         if (savedInstanceState != null) {
-            currentAttempt = (QuizAttempt)savedInstanceState.getSerializable(CURRENT_ATTEMPT);
+            currentAttempt = (QuizAttempt)savedInstanceState.getSerializable(QUIZ_ATTEMPT_KEY);
         }
     }
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (currentAttempt != null) {
-            outState.putSerializable(CURRENT_ATTEMPT, currentAttempt);
+            outState.putSerializable(QUIZ_ATTEMPT_KEY, currentAttempt);
         }
     }
 
@@ -100,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
     // Helper Methods
     private void launchQuizActivity() {
         Intent intent = new Intent(this, QuestionActivity.class);
-        intent.putExtra(CURRENT_ATTEMPT, currentAttempt);
+        intent.putExtra(QUIZ_ATTEMPT_KEY, currentAttempt);
         startActivity(intent);
-        // Clear in-memory attempt; onResume will re-check DB when we return
+        // Clear in-memory attempt (onResume will re-check DB when we return)
         currentAttempt = null;
     }
     private void startNewQuiz() {
@@ -112,6 +112,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void discardCurrentQuiz() {
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
-        // TODO...
+        // TODO (Maybe) ...
     }
 }

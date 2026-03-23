@@ -41,7 +41,7 @@ public class QuestionActivity extends AppCompatActivity {
     private int currentIndex = 0;  // 0-based index into questions list
 
     // INTENT KEY
-    public static final String QUIZ_ATTEMPT_KEY = "quizAttempt";
+    public static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
 
     // STATE KEYS (For saving/restoring)
     private static final String KEY_CURRENT_INDEX = "currentIndex";
@@ -70,7 +70,7 @@ public class QuestionActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
 
         // Get the QuizAttempt passed from MainActivity
-        quizAttempt = (QuizAttempt) getIntent().getSerializableExtra(QUIZ_ATTEMPT_KEY);
+        quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(QUIZ_ATTEMPT_KEY);
         if (quizAttempt == null) {  // Shouldn't reach this
             Log.e(TAG, "No QuizAttempt received - finishing.");
             finish();  return;
