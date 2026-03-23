@@ -34,7 +34,7 @@
         android:focusable="false" />
 
     <fragment android:id="@+id/questionFragment"
-        android:name="cs477.gmu.p2_rzaman9.VideoFragment"
+        android:name="cs477.gmu.p2_rzaman9.QuestionFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
