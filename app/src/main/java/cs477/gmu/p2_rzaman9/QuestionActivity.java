@@ -1,5 +1,6 @@
 package cs477.gmu.p2_rzaman9;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -97,7 +98,7 @@ public class QuestionActivity extends AppCompatActivity {
         }
 
         // Get fragment reference
-        questionFragment = (QuestionFragment) getSupportFragmentManager()
+        questionFragment = (QuestionFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.questionFragment);
 
 
@@ -105,7 +106,7 @@ public class QuestionActivity extends AppCompatActivity {
         displayQuestion(currentIndex);
 
 
-        // Handle back button being pressed
+        // Handle back button being pressed (TODO: NOT WORKING)
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -141,6 +142,9 @@ public class QuestionActivity extends AppCompatActivity {
     private void loadVideo(String videoName) {
         Context context = QuestionActivity.this;
         String pkg = context.getPackageName();
+
+        @SuppressLint("DiscouragedApi")
+        // Not using openRawResource(R.raw.video_name) because videoName would dynamically change
         int videoId = context.getResources().getIdentifier(videoName, "raw", pkg);
 
         if (videoId == 0) {

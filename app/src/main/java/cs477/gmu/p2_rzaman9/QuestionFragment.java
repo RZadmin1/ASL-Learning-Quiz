@@ -84,8 +84,10 @@ public class QuestionFragment extends Fragment {
         if (savedSelection >= 0) {
             int restoredId = getIdForIndex(savedSelection);
             answerGroup.check(restoredId);
+            answerGroup.jumpDrawablesToCurrentState();
         } else {
             answerGroup.clearCheck();
+            answerGroup.jumpDrawablesToCurrentState();
         }
         answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int selectedIndex = getIndexForId(checkedId);
@@ -93,8 +95,10 @@ public class QuestionFragment extends Fragment {
         });
 
         // Update navigation buttons
+        String SUBMIT = getString(R.string.submit_quiz);
+        String NEXT = getString(R.string.next_question);
         prevButton.setVisibility(index > 0 ? View.VISIBLE : View.INVISIBLE);
-        nextButton.setText(index == total - 1 ? "Submit" : "Next");
+        nextButton.setText(index == total - 1 ? SUBMIT : NEXT);
     }
 
 
