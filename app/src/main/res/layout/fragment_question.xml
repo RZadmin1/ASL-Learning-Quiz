@@ -32,33 +32,33 @@
         <RadioButton
             android:id="@+id/option1"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="OPTION 1"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:text="OPTION"
+            android:textSize="14sp"
             tools:ignore="TouchTargetSizeCheck" />
 
         <RadioButton
             android:id="@+id/option2"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="OPTION 2"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:text="OPTION"
+            android:textSize="14sp"
             tools:ignore="TouchTargetSizeCheck" />
 
         <RadioButton
             android:id="@+id/option3"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="OPTION 3"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:text="OPTION"
+            android:textSize="14sp"
             tools:ignore="TouchTargetSizeCheck" />
 
         <RadioButton
             android:id="@+id/option4"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="OPTION 4"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:text="OPTION"
+            android:textSize="14sp"
             tools:ignore="TouchTargetSizeCheck" />
 
     </RadioGroup>
@@ -74,7 +74,7 @@
     <Button android:id="@+id/prevButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="12dp"
         android:textSize="16sp"
         android:text="@string/previous_question"
         app:layout_constraintEnd_toEndOf="@id/questionText"
@@ -85,7 +85,7 @@
     <Button android:id="@+id/nextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="12dp"
         android:textSize="16sp"
         android:text="@string/next_question"
         app:layout_constraintEnd_toEndOf="@id/questionText"
