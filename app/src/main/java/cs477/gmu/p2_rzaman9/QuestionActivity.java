@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class QuestionActivity extends AppCompatActivity {
@@ -32,6 +36,9 @@ public class QuestionActivity extends AppCompatActivity {
 
     // VIEWS (Host Layout)
     private VideoView videoView;
+    private TextView questionLabel;
+
+    private AlertDialog currentDialog;
 
     // FRAGMENT
     private QuestionFragment questionFragment;
@@ -48,6 +55,9 @@ public class QuestionActivity extends AppCompatActivity {
     private static final String KEY_CURRENT_INDEX = "currentIndex";
     private static final String KEY_SCORE = "score";
     private static final String KEY_SELECTIONS = "selections";
+
+
+    private Map<Long, Integer> savedSelections;
 
     // Tracks the user's selected option_index per question (-1 = unanswered)
     private int[] userSelections;
@@ -69,6 +79,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         dbHelper = DatabaseHelper.getInstance(this);
         videoView = findViewById(R.id.videoView);
+        questionLabel = findViewById(R.id.questionLabel);
 
         // Get the QuizAttempt passed from MainActivity
         quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(QUIZ_ATTEMPT_KEY);
@@ -85,7 +96,7 @@ public class QuestionActivity extends AppCompatActivity {
         }
 
         // Load saved selections from DB (questionId -> selectedIndex)
-        Map<Integer, Integer> savedSelections = dbHelper.loadSelections(quizAttempt.getId());
+        savedSelections = dbHelper.loadSelections(quizAttempt.getId());
 
         // Initialize or restore state
         if (savedInstanceState != null) {
@@ -101,16 +112,14 @@ public class QuestionActivity extends AppCompatActivity {
         questionFragment = (QuestionFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.questionFragment);
 
-
         // Display current question
         displayQuestion(currentIndex);
-
 
         // Handle back button being pressed
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                new AlertDialog.Builder(QuestionActivity.this)
+                currentDialog = new AlertDialog.Builder(QuestionActivity.this)
                         .setTitle("Quit Quiz?")
                         .setMessage("Your progress will be saved. You can resume later.")
                         .setPositiveButton("Quit", (dialog, which) -> {
@@ -158,19 +167,26 @@ public class QuestionActivity extends AppCompatActivity {
     // QUESTION DISPLAY
     private void displayQuestion(int index) {
         Question q = questions.get(index);
+        questionLabel.setText(String.format(
+                Locale.US, "Question %d of %d", index + 1, questions.size()));
+        quizAttempt.setCurrentQuestion(index + 1);  // Update QuizAttempt object
         loadVideo(q.getVideoName());  // Load the video for this question
 
         // Tell the fragment to display this question and restore any prior selection
         if (questionFragment != null) {
-            questionFragment.displayQuestion(q, index, questions.size(), userSelections[index]);
+            Integer saved = savedSelections.get(q.getId());
+            int savedSelection = (saved != null) ? saved : -1;
+            questionFragment.displayQuestion(q, index, questions.size(), savedSelection);
         }
+        dbHelper.saveCurrentQuestion(quizAttempt.getId(), currentIndex + 1);
     }
 
 
     // FRAGMENT HELPER METHODS
-    public void onAnswerSelected(int optionIndex) {
-        userSelections[currentIndex] = optionIndex;
-        quizAttempt.setCurrentQuestion(currentIndex + 1);  // keep attempt in sync (1-based)
+
+    public void onAnswerSelected(long questionId, int optionIndex) {
+        savedSelections.put(questionId, optionIndex);
+        dbHelper.saveSelection(quizAttempt.getId(), questionId, optionIndex);
     }
 
     public void onPrevClicked() {
@@ -205,15 +221,22 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (videoView != null) { videoView.start(); }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        if (videoView != null) videoView.pause();
+        if (videoView != null) { videoView.pause(); }
         dbHelper.saveAttemptProgress(quizAttempt);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (videoView != null) videoView.start();
+    protected void onDestroy() {
+        super.onDestroy();
+        if (currentDialog != null && currentDialog.isShowing()) { currentDialog.dismiss(); }
+        if (videoView != null) { videoView.stopPlayback(); }
     }
 }

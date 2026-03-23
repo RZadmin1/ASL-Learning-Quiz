@@ -27,6 +27,9 @@ public class QuestionFragment extends Fragment {
 
     private QuestionActivity host;
 
+    private long currentQuestionId = -1;
+
+
     public QuestionFragment() {
         // Required empty public constructor
     }
@@ -63,14 +66,15 @@ public class QuestionFragment extends Fragment {
 
         answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int selectedIndex = getIndexForId(checkedId);
-            if (selectedIndex >= 0) {
-                host.onAnswerSelected(selectedIndex);
+            if (selectedIndex >= 0 && currentQuestionId > -1) {
+                host.onAnswerSelected(currentQuestionId, selectedIndex);
             }
         });
     }
 
     // Called by QuestionActivity to populate the fragmentUI
     void displayQuestion(Question q, int index, int total, int savedSelection) {
+        currentQuestionId = q.getId();
         questionText.setText(q.getQuestionText());
 
         List<String> options = q.getOptions();
@@ -91,7 +95,9 @@ public class QuestionFragment extends Fragment {
         }
         answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int selectedIndex = getIndexForId(checkedId);
-            if (selectedIndex >= 0) host.onAnswerSelected(selectedIndex);
+            if (selectedIndex >= 0 && currentQuestionId > -1) {
+                host.onAnswerSelected(currentQuestionId, selectedIndex);
+            }
         });
 
         // Update navigation buttons

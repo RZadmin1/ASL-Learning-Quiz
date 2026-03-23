@@ -43,19 +43,9 @@ public class QuizAttempt implements Serializable {
     }
 
 
-    public long getId() {
-        return this.quizId;
-    }
-    public boolean isSubmitted() {
-        return this.submitted;
-    }
-    public int getCurrentQuestion() {
-        return this.currentQuestion;
-    }
-    public int getTotalQuestions() {
-        return this.totalQuestions;
-    }
-    public int getScore() {
-        return this.score;
-    }
+    public long getId() { return quizId; }
+    public boolean isSubmitted() { return submitted; }
+    public int getCurrentQuestion() { return currentQuestion; }
+    public int getTotalQuestions() { return totalQuestions; }
+    public int getScore() { return score; }
 }

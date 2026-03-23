@@ -259,7 +259,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (cursor.moveToFirst()) {
-            long quizId = cursor.getInt(cursor.getColumnIndexOrThrow(_ID));
+            long quizId = cursor.getLong(cursor.getColumnIndexOrThrow(_ID));
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
             int currentQuestion = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[2]));
             cursor.close();
@@ -342,7 +342,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         while (qCursor.moveToNext()) {
-            long id = qCursor.getInt(qCursor.getColumnIndexOrThrow(_ID));
+            long id = qCursor.getLong(qCursor.getColumnIndexOrThrow(_ID));
             String text = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[1]));
             String video = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[2]));
             int orderNum = qCursor.getInt(qCursor.getColumnIndexOrThrow(questionColumns[3]));
@@ -397,8 +397,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param quizId The ID of the quiz attempt to retrieve data for
      * @return Map of the selected indexes and their associated question IDs
      */
-    public Map<Integer, Integer> loadSelections(long quizId) {
-        Map<Integer, Integer> selections = new HashMap<>();
+    public Map<Long, Integer> loadSelections(long quizId) {
+        Map<Long, Integer> selections = new HashMap<>();
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.query(SELECTIONS_TABLE,
                 new String[]{selectionColumns[1], selectionColumns[2]},  // question_id, selected_index
@@ -407,7 +407,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
         while (c.moveToNext()) {
             selections.put(
-                    c.getInt(c.getColumnIndexOrThrow(selectionColumns[1])),
+                    c.getLong(c.getColumnIndexOrThrow(selectionColumns[1])),
                     c.getInt(c.getColumnIndexOrThrow(selectionColumns[2]))
             );
         }
