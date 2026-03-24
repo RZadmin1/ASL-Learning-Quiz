@@ -36,19 +36,16 @@
         app:layout_constraintEnd_toEndOf="@id/quizRecordsTitle" />
 
 
-    <fragment android:id="@+id/recordsFragment"
-        android:name="cs477.gmu.p2_rzaman9.RecordsFragment"
+    <ListView android:id="@+id/recordsList"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-
         app:layout_constraintLeft_toRightOf="@id/quizRecordsTitle"
-        app:layout_constraintTop_toBottomOf="@id/quizRecordsTitle"
+        app:layout_constraintTop_toTopOf="@id/quizRecordsTitle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0"
-        tools:ignore="FragmentTagUsage" />
+        app:layout_constraintVertical_bias="0" />
 
 
     <Button android:id="@+id/deleteAllButton"
@@ -59,8 +56,9 @@
         android:layout_marginEnd="32dp"
         android:textSize="22sp"
         android:text="@string/delete_all_records"
-        app:layout_constraintEnd_toStartOf="@id/recordsFragment"
+        app:layout_constraintEnd_toStartOf="@id/recordsList"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/recordsHomeButton"
         app:layout_constraintBottom_toTopOf="@id/recordsHomeButton" />
 
     <Button android:id="@+id/recordsHomeButton"
@@ -71,7 +69,7 @@
         android:layout_marginEnd="32dp"
         android:textSize="22sp"
         android:text="@string/return_to_home_screen"
-        app:layout_constraintEnd_toStartOf="@id/recordsFragment"
+        app:layout_constraintEnd_toStartOf="@id/recordsList"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quizRecordsDesc"
