@@ -53,14 +53,9 @@ public class QuestionActivity extends AppCompatActivity {
 
     // STATE KEYS (For saving/restoring)
     private static final String KEY_CURRENT_INDEX = "currentIndex";
-    private static final String KEY_SCORE = "score";
-    private static final String KEY_SELECTIONS = "selections";
-
-
-    private Map<Long, Integer> savedSelections;
 
     // Tracks the user's selected option_index per question (-1 = unanswered)
-    private int[] userSelections;
+    private Map<Long, Integer> savedSelections;
 
 
     private static final String TAG = "QuestionActivity";  // For debugging/error messages
@@ -101,12 +96,8 @@ public class QuestionActivity extends AppCompatActivity {
         // Initialize or restore state
         if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX, 0);
-            userSelections = savedInstanceState.getIntArray(KEY_SELECTIONS);
-        } else {
-            currentIndex = quizAttempt.getCurrentQuestion() - 1;  // convert 1-based to 0-based
-            userSelections = new int[questions.size()];
-            Arrays.fill(userSelections, -1);  // -1 = no selection yet
-        }
+        } else { currentIndex = quizAttempt.getCurrentQuestion() - 1; }
+        savedSelections = dbHelper.loadSelections(quizAttempt.getId());
 
         // Get fragment reference
         questionFragment = (QuestionFragment)getSupportFragmentManager()
@@ -138,7 +129,6 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_INDEX, currentIndex);
-        outState.putIntArray(KEY_SELECTIONS, userSelections);
     }
 
 
@@ -205,15 +195,17 @@ public class QuestionActivity extends AppCompatActivity {
 
     private void submitQuiz() {
         int score = 0;
-        for (int i = 0; i < questions.size(); i++) {
-            if (userSelections[i] == questions.get(i).getCorrectIndex()) {
+        for (Question q : questions) {
+            Integer selected = savedSelections.get(q.getId());
+            if (selected != null && selected == q.getCorrectIndex()) {
                 score++;
             }
         }
         quizAttempt.submit(score);
-        // TODO: ... dbHelper.saveRecord(quizAttempt);
+        dbHelper.saveRecord(quizAttempt);
+        dbHelper.markQuizSubmitted(quizAttempt.getId());
+        Log.d(TAG, "SCORE=" + score);
 
-        // Go to ResultActivity (you'll build this later)
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra(QUIZ_ATTEMPT_KEY, quizAttempt);
         startActivity(intent);

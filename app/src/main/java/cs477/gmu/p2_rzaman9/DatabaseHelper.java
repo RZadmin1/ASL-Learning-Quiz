@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -306,8 +307,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(SELECTIONS_TABLE, null, null);
         db.delete(ANSWERS_TABLE, null, null);
         db.delete(QUESTIONS_TABLE, null, null);
-        db.delete(QUIZZES_TABLE, null, null);
-        db.delete(SELECTIONS_TABLE, null, null);
     }
 
     private int getQuestionCount(SQLiteDatabase db, long quizId) {
@@ -425,5 +424,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues vals = new ContentValues();
         vals.put(quizzesColumns[2], currentQuestion);
         db.update(QUIZZES_TABLE, vals, _ID + "=?", new String[]{String.valueOf(quizId)});
+    }
+
+    /**
+     * Saves quiz attempt data to the records table in the database.
+     * @param attempt The QuizAttempt object to save data for
+     */
+    public void saveRecord(QuizAttempt attempt) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Get current date and time as strings
+        /*String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+                .format(new Date());
+        String time = new SimpleDateFormat("hh:mm a", Locale.getDefault())
+                .format(new Date());*/
+        // TODO...
+
+        ContentValues vals = new ContentValues();
+        vals.put(recordColumns[0], attempt.getId());  // quiz_id
+        vals.put(recordColumns[1], attempt.getScore());  // score
+        vals.put(recordColumns[2], attempt.getTotalQuestions());  // total
+        vals.put(recordColumns[3], "date");  // date TODO
+        vals.put(recordColumns[4], "time");  // time TODO
+        db.insert(RECORDS_TABLE, null, vals);
+    }
+
+    /**
+     * Marks a quiz as submitted in the database.
+     * (Does NOT do anything with any QuizAttempt object - handle that elsewhere)
+     * @param quizId The ID of the quiz attempt to mark as submitted.
+     */
+    public void markQuizSubmitted(long quizId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues vals = new ContentValues();
+        vals.put(quizzesColumns[3], 1);  // submitted = true
+        db.update(QUIZZES_TABLE, vals, _ID + "=?",
+                new String[]{String.valueOf(quizId)});
     }
 }

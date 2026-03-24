@@ -93,7 +93,7 @@ public class ResultActivity extends AppCompatActivity {
             return insets;
         });
 
-        attempt = (QuizAttempt) getIntent().getSerializableExtra("currentAttempt");
+        attempt = (QuizAttempt)getIntent().getSerializableExtra("currentAttempt");
         if (attempt == null) { finish(); return; }
 
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
@@ -104,7 +104,7 @@ public class ResultActivity extends AppCompatActivity {
 
         // Set score display
         TextView scoreDisplay = findViewById(R.id.scoreDisplay);
-        scoreDisplay.setText(String.format(Locale.US, "%s%d/%d",
+        scoreDisplay.setText(String.format(Locale.US, "%s %d/%d",
                 getString(R.string.score_label),
                 attempt.getScore(), attempt.getTotalQuestions()
         ));
@@ -118,7 +118,7 @@ public class ResultActivity extends AppCompatActivity {
             String answerText;
             boolean isCorrect;
             if (selectedIndex == null || selectedIndex < 0) {
-                answerText = getString(R.string.no_answer);
+                answerText = "";
                 isCorrect = false;
             } else {
                 answerText = q.getOptions().get(selectedIndex);
