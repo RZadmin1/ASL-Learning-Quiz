@@ -299,7 +299,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         update.put(quizzesColumns[1], count);
         db.update(QUIZZES_TABLE, update, _ID + "=?", new String[]{String.valueOf(quizId)});
 
-        return new QuizAttempt((int) quizId, count);
+        return new QuizAttempt(quizId, count);
     }
 
     private void resetAttempt(SQLiteDatabase db) {
@@ -307,6 +307,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(SELECTIONS_TABLE, null, null);
         db.delete(ANSWERS_TABLE, null, null);
         db.delete(QUESTIONS_TABLE, null, null);
+        db.delete(QUIZZES_TABLE, quizzesColumns[3] + "=?", new String[]{"0"});
     }
 
     private int getQuestionCount(SQLiteDatabase db, long quizId) {
