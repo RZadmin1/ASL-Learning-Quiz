@@ -38,13 +38,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:layout_constraintBottom_toTopOf="@id/questionHomeButton"
+        app:layout_constraintBottom_toTopOf="@id/progressLabel"
         app:layout_constraintTop_toBottomOf="@id/videoView"
         app:layout_constraintVertical_bias="0"
         tools:ignore="FragmentTagUsage" />
 
 
-    <Button android:id="@+id/questionHomeButton"
+    <TextView android:id="@+id/progressLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:text="@string/progress"
+        app:layout_constraintBottom_toTopOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="@id/questionFragment"
+        app:layout_constraintEnd_toEndOf="@id/questionFragment" />
+
+
+    <ProgressBar android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/questionFragment"
+        app:layout_constraintEnd_toEndOf="@id/questionFragment"/>
+
+
+
+    <!--<Button android:id="@+id/questionHomeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -54,6 +78,6 @@
         android:text="@string/return_to_home_screen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
