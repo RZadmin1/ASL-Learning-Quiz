@@ -20,4 +20,5 @@
     <string name="score_label">Score:</string>
     <string name="incorrect">(INCORRECT)</string>
     <string name="correct">(CORRECT)</string>
+    <string name="no_answer">(Not answered)</string>
 </resources>
