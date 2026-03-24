@@ -65,7 +65,7 @@ public class ResultActivity extends AppCompatActivity {
             TextView isCorrectLabel = convertView.findViewById(R.id.isCorrectLabel);
 
             assert row != null;
-            qNumLabel.setText(row.questionNum);
+            qNumLabel.setText(String.format(Locale.US, "Q%d", row.questionNum));
             qAnswerLabel.setText(row.selectedAnswerText);
             if (row.selectedIndex == null || row.selectedIndex < 0) {
                 isCorrectLabel.setText(getContext().getString(R.string.no_answer));
