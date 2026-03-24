@@ -47,9 +47,11 @@ public class QuestionActivity extends AppCompatActivity {
     private QuizAttempt quizAttempt;
     private List<Question> questions;
     private int currentIndex = 0;  // 0-based index into questions list
+    private boolean reviewMode = false;
 
     // INTENT KEY
     public static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
+    public static final String REVIEW_MODE_KEY = "reviewMode";
 
     // STATE KEYS (For saving/restoring)
     private static final String KEY_CURRENT_INDEX = "currentIndex";
@@ -76,12 +78,13 @@ public class QuestionActivity extends AppCompatActivity {
         videoView = findViewById(R.id.videoView);
         questionLabel = findViewById(R.id.questionLabel);
 
-        // Get the QuizAttempt passed from MainActivity
+        // Get QuizAttempt passed from MainActivity (OR ResultActivity/RecordsActivity for review)
         quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(MainActivity.QUIZ_ATTEMPT_KEY);
         if (quizAttempt == null) {  // Shouldn't reach this
             Log.e(TAG, "No QuizAttempt received - finishing.");
             finish();  return;
         }
+        reviewMode = getIntent().getBooleanExtra(REVIEW_MODE_KEY, false);
 
         // Load questions from DB
         questions = dbHelper.getQuestionsForQuiz(quizAttempt.getId());
@@ -110,13 +113,18 @@ public class QuestionActivity extends AppCompatActivity {
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                currentDialog = new AlertDialog.Builder(QuestionActivity.this)
-                        .setTitle("Quit Quiz?")
-                        .setMessage("Your progress will be saved. You can resume later.")
-                        .setPositiveButton("Quit", (dialog, which)
-                                -> finish())
-                        .setNegativeButton("Keep Going", null)
-                        .show();
+                if (reviewMode) { finish(); } // just go back to ResultActivity
+                else {
+                    currentDialog = new AlertDialog.Builder(QuestionActivity.this)
+                            .setTitle("Quit Quiz?")
+                            .setMessage("Your progress will be saved. You can resume later.")
+                            .setPositiveButton("Quit", (dialog, which) -> {
+                                setEnabled(false);
+                                finish();
+                            })
+                            .setNegativeButton("Keep Going", null)
+                            .show();
+                }
             }
         };
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
@@ -163,7 +171,7 @@ public class QuestionActivity extends AppCompatActivity {
         if (questionFragment != null) {
             Integer saved = savedSelections.get(q.getId());
             int savedSelection = (saved != null) ? saved : -1;
-            questionFragment.displayQuestion(q, index, questions.size(), savedSelection);
+            questionFragment.displayQuestion(q, index, questions.size(), savedSelection, reviewMode);
         }
         dbHelper.saveCurrentQuestion(quizAttempt.getId(), currentIndex + 1);
     }
@@ -187,7 +195,10 @@ public class QuestionActivity extends AppCompatActivity {
         if (currentIndex < questions.size() - 1) {
             currentIndex++;
             displayQuestion(currentIndex);
-        } else { submitQuiz(); }
+        } else {
+            if (reviewMode) { finish(); }
+            else { submitQuiz(); }
+        }
     }
 
     private void submitQuiz() {

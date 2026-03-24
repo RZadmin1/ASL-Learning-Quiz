@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -73,38 +74,46 @@ public class QuestionFragment extends Fragment {
     }
 
     // Called by QuestionActivity to populate the fragmentUI
-    void displayQuestion(Question q, int index, int total, int savedSelection) {
+    void displayQuestion(Question q, int index, int total, int savedSelection, boolean reviewMode) {
         currentQuestionId = q.getId();
         questionText.setText(q.getQuestionText());
 
         List<String> options = q.getOptions();
-        option1.setText(options.get(0));
-        option2.setText(options.get(1));
-        option3.setText(options.get(2));
-        option4.setText(options.get(3));
+        RadioButton[] buttons = {option1, option2, option3, option4};
 
-        // Restore prior selection without triggering the listener
+        // Reset all buttons to default state before applying new state
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setText(options.get(i));
+            buttons[i].setBackground(null);
+            buttons[i].setEnabled(!reviewMode);  // disable clicks in review mode
+        }
+
+        // Restore or apply selection
         answerGroup.setOnCheckedChangeListener(null);
         if (savedSelection >= 0) {
-            int restoredId = getIdForIndex(savedSelection);
-            answerGroup.check(restoredId);
+            answerGroup.check(getIdForIndex(savedSelection));
             answerGroup.jumpDrawablesToCurrentState();
         } else {
             answerGroup.clearCheck();
             answerGroup.jumpDrawablesToCurrentState();
         }
-        answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            int selectedIndex = getIndexForId(checkedId);
-            if (selectedIndex >= 0 && currentQuestionId > -1) {
-                host.onAnswerSelected(currentQuestionId, selectedIndex);
-            }
-        });
 
-        // Update navigation buttons
-        String SUBMIT = getString(R.string.submit_quiz);
-        String NEXT = getString(R.string.next_question);
+        if (reviewMode) { applyReviewHighlights(buttons, q.getCorrectIndex(), savedSelection); }
+        else {  // Re-attach listener only if NOT in review mode
+            answerGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                int selectedIndex = getIndexForId(checkedId);
+                if (selectedIndex >= 0 && currentQuestionId != -1) {
+                    host.onAnswerSelected(currentQuestionId, selectedIndex);
+                }
+            });
+        }
+
         prevButton.setVisibility(index > 0 ? View.VISIBLE : View.INVISIBLE);
-        nextButton.setText(index == total - 1 ? SUBMIT : NEXT);
+        if (reviewMode) { nextButton.setText(getString(R.string.next_question)); }
+        else {
+            nextButton.setText(index == total-1
+                    ? getString(R.string.submit_quiz) : getString(R.string.next_question));
+        }
     }
 
 
@@ -125,5 +134,22 @@ public class QuestionFragment extends Fragment {
         if (id == R.id.option3) return 2;
         if (id == R.id.option4) return 3;
         return -1;
+    }
+
+    private void applyReviewHighlights(RadioButton[] buttons,
+                                       int correctIndex, int selectedIndex) {
+        // Always highlight the correct answer green
+        buttons[correctIndex].setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.green_transparent));
+        buttons[correctIndex].setText(
+                String.format("%s - CORRECT!", buttons[correctIndex].getText()));
+
+        // If user selected wrong answer, highlight it red
+        if (selectedIndex >= 0 && selectedIndex != correctIndex) {
+            buttons[selectedIndex].setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.red_transparent));
+            buttons[selectedIndex].setText(
+                    String.format("%s - INCORRECT", buttons[selectedIndex].getText()));
+        }
     }
 }
