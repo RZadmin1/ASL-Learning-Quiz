@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private QuizAttempt currentAttempt = null;
 
     // FOR SAVING VALUES DURING APP UPDATE/ROTATING & SENDING VIA INTENT
-    private static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
+    public static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
 
 
     private final String TAG = "MainActivity";  // For debugging/error messages

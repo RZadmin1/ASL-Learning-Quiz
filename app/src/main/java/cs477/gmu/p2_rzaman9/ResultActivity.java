@@ -93,7 +93,7 @@ public class ResultActivity extends AppCompatActivity {
             return insets;
         });
 
-        attempt = (QuizAttempt)getIntent().getSerializableExtra("currentAttempt");
+        attempt = (QuizAttempt)getIntent().getSerializableExtra(QuestionActivity.QUIZ_ATTEMPT_KEY);
         if (attempt == null) { finish(); return; }
 
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
@@ -135,7 +135,7 @@ public class ResultActivity extends AppCompatActivity {
         Button reviewButton = findViewById(R.id.reviewQuestionsButton);
         reviewButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, QuestionActivity.class);
-            intent.putExtra("currentAttempt", attempt);
+            intent.putExtra(QuestionActivity.QUIZ_ATTEMPT_KEY, attempt);
             intent.putExtra("reviewMode", true);  // flag for QuestionActivity to handle
             startActivity(intent);
         });

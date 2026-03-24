@@ -77,7 +77,7 @@ public class QuestionActivity extends AppCompatActivity {
         questionLabel = findViewById(R.id.questionLabel);
 
         // Get the QuizAttempt passed from MainActivity
-        quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(QUIZ_ATTEMPT_KEY);
+        quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(MainActivity.QUIZ_ATTEMPT_KEY);
         if (quizAttempt == null) {  // Shouldn't reach this
             Log.e(TAG, "No QuizAttempt received - finishing.");
             finish();  return;
