@@ -10,7 +10,7 @@
     <string name="asl_quiz_records">ASL Quiz Records</string>
     <string name="records_page_desc">This is the list of your quiz attempt scores.\n To delete one of your attempt\'s record, hold down on an item to delete it.</string>
     <string name="delete_all_records">Delete All Records</string>
-    <string name="return_to_home_screen">Return to Home Screen</string>
+    <string name="go_to_results">Go to Results</string>
     <string name="next_question">Next</string>
     <string name="previous_question">Back</string>
     <string name="submit_quiz">Submit</string>
