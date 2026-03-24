@@ -18,4 +18,6 @@
     <string name="quiz_complete">Quiz Complete!</string>
     <string name="review_questions">Review Questions</string>
     <string name="score_label">Score:</string>
+    <string name="incorrect">(INCORRECT)</string>
+    <string name="correct">(CORRECT)</string>
 </resources>
