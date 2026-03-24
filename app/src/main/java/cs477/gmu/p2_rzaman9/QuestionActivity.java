@@ -54,7 +54,7 @@ public class QuestionActivity extends AppCompatActivity {
     public static final String REVIEW_MODE_KEY = "reviewMode";
 
     // STATE KEYS (For saving/restoring)
-    private static final String KEY_CURRENT_INDEX = "currentIndex";
+    private static final String CURRENT_INDEX_KEY = "currentIndex";
 
     // Tracks the user's selected option_index per question (-1 = unanswered)
     private Map<Long, Integer> savedSelections;
@@ -98,7 +98,8 @@ public class QuestionActivity extends AppCompatActivity {
 
         // Initialize or restore state
         if (savedInstanceState != null) {
-            currentIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX, 0);
+            currentIndex = savedInstanceState.getInt(CURRENT_INDEX_KEY, 0);
+            reviewMode = savedInstanceState.getBoolean(REVIEW_MODE_KEY, false);
         } else { currentIndex = quizAttempt.getCurrentQuestion() - 1; }
         savedSelections = dbHelper.loadSelections(quizAttempt.getId());
 
@@ -133,7 +134,8 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_CURRENT_INDEX, currentIndex);
+        outState.putInt(CURRENT_INDEX_KEY, currentIndex);
+        outState.putBoolean(REVIEW_MODE_KEY, reviewMode);
     }
 
 

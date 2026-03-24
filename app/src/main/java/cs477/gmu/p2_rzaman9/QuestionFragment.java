@@ -142,7 +142,7 @@ public class QuestionFragment extends Fragment {
         buttons[correctIndex].setBackgroundColor(
                 ContextCompat.getColor(requireContext(), R.color.green_transparent));
         buttons[correctIndex].setText(
-                String.format("%s - CORRECT!", buttons[correctIndex].getText()));
+                String.format("%s - CORRECT", buttons[correctIndex].getText()));
 
         // If user selected wrong answer, highlight it red
         if (selectedIndex >= 0 && selectedIndex != correctIndex) {
