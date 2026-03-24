@@ -128,16 +128,27 @@ public class ResultActivity extends AppCompatActivity {
             rows.add(new ResultRow(i + 1, answerText, isCorrect, selectedIndex));
         }
 
-        ListView listView = findViewById(R.id.recordsList);
-        listView.setAdapter(new ResultAdapter(this, rows));
+        ListView resultListView = findViewById(R.id.recordsList);
+        resultListView.setAdapter(new ResultAdapter(this, rows));
 
         // Review button: relaunch QuestionActivity in review mode
         Button reviewButton = findViewById(R.id.reviewQuestionsButton);
-        reviewButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, QuestionActivity.class);
-            intent.putExtra(QuestionActivity.QUIZ_ATTEMPT_KEY, attempt);
-            intent.putExtra("reviewMode", true);  // flag for QuestionActivity to handle
-            startActivity(intent);
-        });
+        reviewButton.setOnClickListener(v -> goToReview(dbHelper, 1));
+
+        // Question List: relaunch QuestionActivity in review mode at desired question
+        resultListView.setOnItemClickListener(
+                (parent, view, position, id)
+                        -> goToReview(dbHelper, position+1));
+    }
+
+
+    private void goToReview(DatabaseHelper dbHelper, int currentQuestion) {
+        // position is 0-based, questions are 1-based
+        attempt.setCurrentQuestion(currentQuestion);
+        dbHelper.saveCurrentQuestion(attempt.getId(), currentQuestion);
+        Intent intent = new Intent(this, QuestionActivity.class);
+        intent.putExtra(QuestionActivity.QUIZ_ATTEMPT_KEY, attempt);
+        intent.putExtra(QuestionActivity.REVIEW_MODE_KEY, true);
+        startActivity(intent);
     }
 }
