@@ -285,9 +285,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Insert fresh quiz row
         ContentValues quizVals = new ContentValues();
         quizVals.put(quizzesColumns[0], MainActivity.QUIZ);  // title
-        quizVals.put(quizzesColumns[1], 0);   // num_questions — updated after seeding
-        quizVals.put(quizzesColumns[2], 1);   // current_question = 1
-        quizVals.put(quizzesColumns[3], 0);   // submitted = false
+        quizVals.put(quizzesColumns[1], 0);  // num_questions — updated after seeding
+        quizVals.put(quizzesColumns[2], 1);  // current_question = 1
+        quizVals.put(quizzesColumns[3], 0);  // submitted = false
         long quizId = db.insert(QUIZZES_TABLE, null, quizVals);
 
         // Seed questions and answers for this quiz
@@ -375,8 +375,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void saveAttemptProgress(QuizAttempt attempt) {
         SQLiteDatabase db = getWritableDatabase();
+        // TODO: Double-check saveAttemptProgress()!!!
         // We use SharedPreferences for current question since QuizAttempt
-        // isn't a DB table — see note below
+        // isn't a DB table - see note below
     }
 
 
@@ -460,5 +461,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         vals.put(quizzesColumns[3], 1);  // submitted = true
         db.update(QUIZZES_TABLE, vals, _ID + "=?",
                 new String[]{String.valueOf(quizId)});
+    }
+
+    /**
+     * Get the list of quiz attempt records from the database.
+     * @return List of RecordRow objects
+     */
+    public List<RecordRow> getAllRecords() {
+        List<RecordRow> records = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor c = db.query(RECORDS_TABLE,
+                new String[]{_ID, recordColumns[1], recordColumns[2],
+                        recordColumns[3], recordColumns[4]},
+                // score, total, date, time
+                null, null, null, null,
+                _ID + " DESC");  // most recent first
+
+        while (c.moveToNext()) {
+            long id      = c.getLong(c.getColumnIndexOrThrow(_ID));
+            int score    = c.getInt(c.getColumnIndexOrThrow(recordColumns[1]));
+            int total    = c.getInt(c.getColumnIndexOrThrow(recordColumns[2]));
+            String date  = c.getString(c.getColumnIndexOrThrow(recordColumns[3]));
+            String time  = c.getString(c.getColumnIndexOrThrow(recordColumns[4]));
+
+            records.add(new RecordRow(id,
+                    score + "/" + total,
+                    date + " " + time));
+        }
+        c.close();
+        return records;
+    }
+
+    /**
+     * Delete a single quiz attempt record from the database.
+     * @param recordId The ID of the record to delete
+     */
+    public void deleteRecord(long recordId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(RECORDS_TABLE, _ID + "=?",
+                new String[]{String.valueOf(recordId)});
+    }
+
+    /**
+     * Deletes ALL quiz attempt record entries in the database.
+     * (WARNING: Does not handle confirmation - ensure safety/confirmation elsewhere)
+     */
+    public void deleteAllRecords() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(RECORDS_TABLE, null, null);
     }
 }

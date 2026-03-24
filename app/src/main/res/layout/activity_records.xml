@@ -38,8 +38,7 @@
     <ListView android:id="@+id/recordsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
         app:layout_constraintTop_toBottomOf="@id/quizRecordsDesc"
         app:layout_constraintBottom_toTopOf="@id/deleteAllButton"
         app:layout_constraintVertical_bias="0" />
