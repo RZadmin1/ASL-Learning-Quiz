@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -179,7 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 for (int k = 0; k < optArr.length(); k++) {
                     options.add(optArr.getString(k));
                 }
-                long questionId = insertQuestionIntoDB(db, quizId,
+                insertQuestionIntoDB(db, quizId,
                         qObj.getInt("order_num"),
                         qObj.getString("question_text"),
                         qObj.getString("video"),
@@ -195,16 +194,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Helper method for inserting question data into the database.
-     * @param db The database to insert the question into
-     * @param quizId The ID of the quiz attempt to associate the question with
-     * @param orderNum Which order the question would show up in by default
+     * @param db           The database to insert the question into
+     * @param quizId       The ID of the quiz attempt to associate the question with
+     * @param orderNum     Which order the question would show up in by default
      * @param questionText The actual question text itself
-     * @param video The name of the video file associated with the question (without any extension)
-     * @param options The list of option strings for the answer choices
+     * @param video        The name of the video file associated with the question (without any extension)
+     * @param options      The list of option strings for the answer choices
      * @param correctIndex The index of the correct answer choice
-     * @return The ID of the question
      */
-    private long insertQuestionIntoDB(SQLiteDatabase db, long quizId, int orderNum,
+    private void insertQuestionIntoDB(SQLiteDatabase db, long quizId, int orderNum,
                                       String questionText, String video,
                                       List<String> options, int correctIndex) {
         ContentValues qVals = new ContentValues();
@@ -222,30 +220,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             aVals.put(optionColumns[2], options.get(i));
             db.insert(ANSWERS_TABLE, null, aVals);
         }
-        return questionId;
     }
 
-
-    /**
-     * Insert a record of a quiz attempt into the database.
-     * recordColumns = {"quiz_id", "score", "total", "date", "time"}
-     * @param db The database to insert a record into
-     * @param quizId The quiz ID
-     * @param score The score of the attempt
-     * @param total The total number of questions
-     * @param date A String representation of the date of the attempt
-     * @param time A String representation of the time of the attempt
-     */
-    private void recordScoreIntoDB(
-            SQLiteDatabase db, long quizId, int score, int total, String date, String time) {
-        ContentValues qVals = new ContentValues();
-        qVals.put(recordColumns[0], quizId);
-        qVals.put(recordColumns[1], score);
-        qVals.put(recordColumns[2], total);
-        qVals.put(recordColumns[3], date);
-        qVals.put(recordColumns[4], time);
-        long questionId = db.insert("records", null, qVals);
-    }
 
     /**
      * Get the first quiz in the database that has not yet been submitted.
@@ -367,18 +343,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         qCursor.close();
         return questions;
-    }
-
-    /**
-     * Save an attempts progress in a way that it can be restored regardless of
-     * how the app's state changes
-     * @param attempt The QuizAttempt object to save
-     */
-    public void saveAttemptProgress(QuizAttempt attempt) {
-        SQLiteDatabase db = getWritableDatabase();
-        // TODO: Double-check saveAttemptProgress()!!!
-        // We use SharedPreferences for current question since QuizAttempt
-        // isn't a DB table - see note below
     }
 
 

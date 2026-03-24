@@ -113,11 +113,8 @@ public class QuestionActivity extends AppCompatActivity {
                 currentDialog = new AlertDialog.Builder(QuestionActivity.this)
                         .setTitle("Quit Quiz?")
                         .setMessage("Your progress will be saved. You can resume later.")
-                        .setPositiveButton("Quit", (dialog, which) -> {
-                            // Save current position before leaving
-                            dbHelper.saveAttemptProgress(quizAttempt);
-                            finish();
-                        })
+                        .setPositiveButton("Quit", (dialog, which)
+                                -> finish())
                         .setNegativeButton("Keep Going", null)
                         .show();
             }
@@ -222,7 +219,6 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (videoView != null) { videoView.pause(); }
-        dbHelper.saveAttemptProgress(quizAttempt);
     }
 
     @Override
