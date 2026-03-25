@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,15 +172,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     .getJSONObject(0)
                     .getJSONArray("questions");
 
-            for (int j = 0; j < questions.length(); j++) {
-                JSONObject qObj = questions.getJSONObject(j);
+            // Build a shuffleable index list
+            List<Integer> indices = new ArrayList<>();
+            for (int i = 0; i < questions.length(); i++) { indices.add(i); }
+
+            // Shuffle only if setting is enabled
+            if (Settings.get(context, Settings.SHUFFLE_KEY)) { Collections.shuffle(indices); }
+
+            // Insert in the (possibly shuffled) order, using position as new order_num
+            for (int i = 0; i < indices.size(); i++) {
+                JSONObject qObj = questions.getJSONObject(indices.get(i));
                 List<String> options = new ArrayList<>();
                 JSONArray optArr = qObj.getJSONArray("options");
-                for (int k = 0; k < optArr.length(); k++) {
-                    options.add(optArr.getString(k));
-                }
+                for (int j = 0; j < optArr.length(); j++) { options.add(optArr.getString(j)); }
                 insertQuestionIntoDB(db, quizId,
-                        qObj.getInt("order_num"),
+                        i+1,  // new order_num based on shuffled position
                         qObj.getString("question_text"),
                         qObj.getString("video"),
                         options,
@@ -288,7 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private int getQuestionCount(SQLiteDatabase db, long quizId) {
         Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + QUESTIONS_TABLE +
-                " WHERE quiz_id=?", new String[]{String.valueOf(quizId)});
+                " WHERE " + questionColumns[0] + "=?", new String[]{String.valueOf(quizId)});
         int count = 0;
         if (c.moveToFirst()) count = c.getInt(0);
         c.close();

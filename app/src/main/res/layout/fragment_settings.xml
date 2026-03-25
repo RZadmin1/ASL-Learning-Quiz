@@ -24,19 +24,9 @@
         android:textSize="20sp"
         android:text="@string/progress_bar"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settingsTitle" />
-
-    <CheckBox android:id="@+id/shuffleToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="@string/shuffle_questions"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progBarToggle" />
 
     <CheckBox android:id="@+id/colorScoresToggle"
         android:layout_width="wrap_content"
@@ -46,7 +36,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shuffleToggle" />
+        app:layout_constraintTop_toBottomOf="@id/progBarToggle" />
 
     <CheckBox android:id="@+id/videoSpeedToggle"
         android:layout_width="wrap_content"
@@ -57,6 +47,16 @@
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/colorScoresToggle" />
+
+    <CheckBox android:id="@+id/shuffleToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/shuffle_questions"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/videoSpeedToggle" />
 
     <Button android:id="@+id/settingsExitButton"
         android:layout_width="36dp"
@@ -74,5 +74,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText,SpUsage" />
+
+    <TextView android:id="@+id/shuffleNoteText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:text="@string/shuffle_note"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toStartOf="@id/shuffleToggle"
+        app:layout_constraintEnd_toStartOf="@id/settingsExitButton"
+        app:layout_constraintTop_toBottomOf="@id/shuffleToggle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

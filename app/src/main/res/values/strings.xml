@@ -29,4 +29,5 @@
     <string name="color_coded_scores">Color-Coded Scores</string>
     <string name="shuffle_questions">Shuffle Questions</string>
     <string name="progress_bar">Progress Bar</string>
+    <string name="shuffle_note">* NOTE: In-progress quizzes cannot be shuffled/unshuffled!</string>
 </resources>
