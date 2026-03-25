@@ -34,4 +34,6 @@
     <string name="score">Score</string>
     <string name="attempt">Attempt</string>
     <string name="quiz_title">Quiz Title</string>
+    <string name="is_shuffled">Is Shuffled?</string>
+    <string name="_2x"><![CDATA[>>2x]]></string>
 </resources>

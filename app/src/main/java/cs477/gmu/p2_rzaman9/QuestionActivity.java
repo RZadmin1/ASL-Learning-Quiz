@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -41,6 +42,9 @@ public class QuestionActivity extends AppCompatActivity {
     private TextView questionLabel;
     private TextView progressLabel;
     private ProgressBar progressBar;
+
+    private ImageView shuffleIcon;
+    private TextView speedIcon;
 
     private AlertDialog currentDialog;
 
@@ -86,6 +90,9 @@ public class QuestionActivity extends AppCompatActivity {
         progressLabel = findViewById(R.id.progressLabel);
         progressBar = findViewById(R.id.progressBar);
         Button resultsBtn = findViewById(R.id.resultsButton);
+
+        shuffleIcon = findViewById(R.id.shuffleIcon);
+        speedIcon = findViewById(R.id.speedIcon);
 
         // Get QuizAttempt passed from MainActivity (OR ResultActivity/RecordsActivity for review)
         quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(MainActivity.QUIZ_ATTEMPT_KEY);
@@ -195,6 +202,9 @@ public class QuestionActivity extends AppCompatActivity {
                 Locale.US, "Question %d of %d", index + 1, questions.size()));
         quizAttempt.setCurrentQuestion(index + 1);  // Update QuizAttempt object
         loadVideo(q.getVideoName());  // Load the video for this question
+
+        shuffleIcon.setVisibility(quizAttempt.isShuffled() ? View.VISIBLE : View.INVISIBLE);
+        speedIcon.setVisibility(videoSpeedEnabled ? View.VISIBLE : View.INVISIBLE);
 
         // Tell the fragment to display this question and restore any prior selection
         if (questionFragment != null) {

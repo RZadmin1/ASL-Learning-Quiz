@@ -32,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper instance;
     final private static String QUIZ_DB_NAME = "asl_quiz_db";
     final static String _ID = "_id";
-    final private static Integer VERSION = 4;
+    final private static Integer VERSION = 6;
 
     final private Context context;
     final private String quizDataFile;
@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     final static String RECORDS_TABLE = "records";
     final static String SELECTIONS_TABLE = "selections";
 
-    final static String[] quizzesColumns = {"title", "num_questions", "current_question", "submitted"};
+    final static String[] quizzesColumns = {"title", "num_questions", "current_question", "submitted", "shuffled"};
     final static String[] questionColumns = {"quiz_id", "question_text", "video", "order_num", "correct_index"};
     final static String[] optionColumns = {"question_id", "option_index", "answer_text"};
     final static String[] recordColumns = {"quiz_id", "score", "total", "date", "time"};
@@ -80,11 +80,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "%s TEXT NOT NULL, " +  // title
                         "%s INTEGER NOT NULL, " +  // num_questions
                         "%s INTEGER NOT NULL DEFAULT 1, " +  // current_question
-                        "%s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0, 1)))",  // submitted
+                        "%s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0, 1)), " +  // submitted
+                        "%s INTEGER NOT NULL DEFAULT 0 CHECK (%s IN (0, 1)))",  // shuffled
                         // *****  0=FALSE, 1=TRUE  ***** //
                 QUIZZES_TABLE, _ID,
                 quizzesColumns[0], quizzesColumns[1], quizzesColumns[2],
-                quizzesColumns[3], quizzesColumns[3]
+                quizzesColumns[3], quizzesColumns[3], quizzesColumns[4], quizzesColumns[4]
         ));
 
         db.execSQL(String.format(
@@ -240,7 +241,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public QuizAttempt getInProgressAttempt() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(QUIZZES_TABLE,
-                new String[]{_ID, quizzesColumns[1], quizzesColumns[2]},  // id, num_questions
+                // id, num_questions, shuffled
+                new String[]{_ID, quizzesColumns[1], quizzesColumns[2], quizzesColumns[4]},
                 quizzesColumns[3] + " = 0",            // WHERE submitted = 0
                 null, null, null, null);
 
@@ -248,8 +250,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long quizId = cursor.getLong(cursor.getColumnIndexOrThrow(_ID));
             int numQuestions = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[1]));
             int currentQuestion = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[2]));
+            int shuffled = cursor.getInt(cursor.getColumnIndexOrThrow(quizzesColumns[4]));
             cursor.close();
-            QuizAttempt q = new QuizAttempt(quizId, numQuestions);
+            QuizAttempt q = new QuizAttempt(quizId, numQuestions, (shuffled==1));
             q.setCurrentQuestion(currentQuestion);
             return q;
         }
@@ -270,9 +273,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Insert fresh quiz row
         ContentValues quizVals = new ContentValues();
         quizVals.put(quizzesColumns[0], MainActivity.QUIZ);  // title
-        quizVals.put(quizzesColumns[1], 0);  // num_questions — updated after seeding
+        quizVals.put(quizzesColumns[1], 0);  // num_questions - updated after insertions
         quizVals.put(quizzesColumns[2], 1);  // current_question = 1
         quizVals.put(quizzesColumns[3], 0);  // submitted = false
+
+        // shuffle = 0 if SHUFFLE_KEY is false, otherwise shuffle = 1
+        quizVals.put(quizzesColumns[4], Settings.get(context, Settings.SHUFFLE_KEY) ? 1 : 0);
         long quizId = db.insert(QUIZZES_TABLE, null, quizVals);
 
         // Seed questions and answers for this quiz
@@ -284,7 +290,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         update.put(quizzesColumns[1], count);
         db.update(QUIZZES_TABLE, update, _ID + "=?", new String[]{String.valueOf(quizId)});
 
-        return new QuizAttempt(quizId, count);
+        return new QuizAttempt(quizId, count, Settings.get(context, Settings.SHUFFLE_KEY));
     }
 
     private void resetAttempt(SQLiteDatabase db) {

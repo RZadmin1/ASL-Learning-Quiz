@@ -32,10 +32,10 @@ public class SettingsFragment extends Fragment {
 
         CheckBox progBarToggle, shuffleToggle, colorScoresToggle, videoSpeedToggle;
 
-        progBarToggle     = view.findViewById(R.id.progBarToggle);
-        shuffleToggle     = view.findViewById(R.id.shuffleToggle);
+        progBarToggle = view.findViewById(R.id.progBarToggle);
+        shuffleToggle = view.findViewById(R.id.shuffleToggle);
         colorScoresToggle = view.findViewById(R.id.colorScoresToggle);
-        videoSpeedToggle  = view.findViewById(R.id.videoSpeedToggle);
+        videoSpeedToggle = view.findViewById(R.id.videoSpeedToggle);
 
         // Load current saved state into checkboxes
         progBarToggle.setChecked(prefs.getBoolean(Settings.PROGRESS_BAR_KEY, false));

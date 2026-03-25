@@ -6,6 +6,7 @@ import java.io.Serializable;
 public class QuizAttempt implements Serializable {
 
     private final long quizId;  // Quiz ID in the DATABASE
+    private final boolean shuffled;  // Can't get changed later
     private boolean submitted = false;
     private int currentQuestion = 1;
     private int score;
@@ -13,23 +14,13 @@ public class QuizAttempt implements Serializable {
     private final int totalQuestions;
 
 
-    public QuizAttempt(long quizId, int totalQuestions) {
+    public QuizAttempt(long quizId, int totalQuestions, boolean shuffled) {
         this.quizId = quizId;
         this.totalQuestions = totalQuestions;
-    }
-    public QuizAttempt(long quizId, int totalQuestions, int score) {
-        this(quizId, totalQuestions);
-        this.score = score;
-        this.submitted = true;
+        this.shuffled = shuffled;
     }
 
 
-    public void nextQuestion() {
-        if (currentQuestion < totalQuestions) { currentQuestion++; }
-    }
-    public void prevQuestion() {
-        if (currentQuestion > 1) { currentQuestion--; }
-    }
     public void setCurrentQuestion(int questionNum) {
         // Clamp currentQuestion value in range [1, totalQuestions]
         this.currentQuestion = Math.max(1, Math.min(questionNum, totalQuestions));
@@ -44,7 +35,7 @@ public class QuizAttempt implements Serializable {
 
 
     public long getId() { return quizId; }
-    public boolean isSubmitted() { return submitted; }
+    public boolean isShuffled() { return shuffled; }
     public int getCurrentQuestion() { return currentQuestion; }
     public int getTotalQuestions() { return totalQuestions; }
     public int getScore() { return score; }
