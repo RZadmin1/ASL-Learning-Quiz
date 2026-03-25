@@ -1,7 +1,6 @@
 package cs477.gmu.p2_rzaman9;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ import java.util.List;
 
 public class RecordsActivity extends AppCompatActivity {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "RecordsActivity";
     private RecordsAdapter adapter;
     private List<RecordRow> rows;
@@ -90,7 +90,7 @@ public class RecordsActivity extends AppCompatActivity {
 
         // Returning to MainActivity
         returnHomeBtn.setOnClickListener(v ->
-                startActivity(new Intent(this, MainActivity.class)));
+                getOnBackPressedDispatcher().onBackPressed());
     }
 
     @Override

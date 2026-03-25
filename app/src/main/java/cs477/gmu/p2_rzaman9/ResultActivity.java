@@ -131,10 +131,10 @@ public class ResultActivity extends AppCompatActivity {
 
         // Review button: relaunch QuestionActivity in review mode
         Button reviewBtn = findViewById(R.id.reviewQuestionsButton);
-        Button recordsBtn = findViewById(R.id.recordsButton);
+        Button returnHomeBtn = findViewById(R.id.resultsHomeButton);
         reviewBtn.setOnClickListener(v -> goToReview(dbHelper, 1));
-        recordsBtn.setOnClickListener(v ->
-                startActivity(new Intent(this, RecordsActivity.class)));
+        returnHomeBtn.setOnClickListener(v ->
+                startActivity(new Intent(this, MainActivity.class)));
 
         // Question List: relaunch QuestionActivity in review mode at desired question
         resultListView.setOnItemClickListener(
