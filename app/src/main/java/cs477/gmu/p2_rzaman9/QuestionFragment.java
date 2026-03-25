@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class QuestionFragment extends Fragment {
@@ -76,7 +77,8 @@ public class QuestionFragment extends Fragment {
     // Called by QuestionActivity to populate the fragmentUI
     void displayQuestion(Question q, int index, int total, int savedSelection, boolean reviewMode) {
         currentQuestionId = q.getId();
-        questionText.setText(q.getQuestionText());
+        questionText.setText(
+                String.format(Locale.US, "%d. %s", index+1, q.getQuestionText()));
 
         List<String> options = q.getOptions();
         RadioButton[] buttons = {option1, option2, option3, option4};
