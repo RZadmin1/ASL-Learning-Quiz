@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -177,6 +178,11 @@ public class QuestionActivity extends AppCompatActivity {
         Uri uri = Uri.parse("android.resource://" + pkg + "/" + videoId);
         videoView.setOnPreparedListener(mp -> {
             mp.setLooping(true);
+            if (videoSpeedEnabled) {
+                PlaybackParams params = new PlaybackParams();
+                params.setSpeed(2.0f);
+                mp.setPlaybackParams(params);
+            }
             mp.start();
         });
         videoView.setVideoURI(uri);
