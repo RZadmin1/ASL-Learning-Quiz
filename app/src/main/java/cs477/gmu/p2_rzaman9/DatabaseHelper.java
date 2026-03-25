@@ -19,7 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -28,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper instance;
     final private static String QUIZ_DB_NAME = "asl_quiz_db";
     final static String _ID = "_id";
-    final private static Integer VERSION = 3;
+    final private static Integer VERSION = 4;
 
     final private Context context;
     final private String quizDataFile;
@@ -60,8 +64,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.quizDataFile = quizDataFile;
     }
     public DatabaseHelper(Context context) { this(context, "quiz_questions.json"); }
-
-    // TODO: Implement Records Table & Functionality
 
 
     @Override
@@ -410,18 +412,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         // Get current date and time as strings
-        /*String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
                 .format(new Date());
         String time = new SimpleDateFormat("hh:mm a", Locale.getDefault())
-                .format(new Date());*/
-        // TODO...
+                .format(new Date());
 
         ContentValues vals = new ContentValues();
         vals.put(recordColumns[0], attempt.getId());  // quiz_id
         vals.put(recordColumns[1], attempt.getScore());  // score
         vals.put(recordColumns[2], attempt.getTotalQuestions());  // total
-        vals.put(recordColumns[3], "date");  // date TODO
-        vals.put(recordColumns[4], "time");  // time TODO
+        vals.put(recordColumns[3], date);  // date
+        vals.put(recordColumns[4], time);  // time
         db.insert(RECORDS_TABLE, null, vals);
     }
 
