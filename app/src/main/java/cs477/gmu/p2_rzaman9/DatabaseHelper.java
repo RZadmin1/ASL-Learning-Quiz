@@ -463,7 +463,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             records.add(new RecordRow(id,
                     score + "/" + total,
-                    date + " " + time));
+                    date + " " + time,
+                    score, total));
         }
         c.close();
         return records;

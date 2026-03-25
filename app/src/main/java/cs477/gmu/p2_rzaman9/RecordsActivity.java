@@ -2,6 +2,7 @@ package cs477.gmu.p2_rzaman9;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -122,10 +124,32 @@ public class RecordsActivity extends AppCompatActivity {
 
             RecordRow row = getItem(position);
 
-            TextView quizNameRowLabel  = convertView.findViewById(R.id.quizNameRowLabel);
-            TextView attemptRowLabel   = convertView.findViewById(R.id.attemptRowLabel);
-            TextView scoreRowLabel     = convertView.findViewById(R.id.scoreRowLabel);
+            TextView quizNameRowLabel = convertView.findViewById(R.id.quizNameRowLabel);
+            TextView attemptRowLabel = convertView.findViewById(R.id.attemptRowLabel);
+            TextView scoreRowLabel = convertView.findViewById(R.id.scoreRowLabel);
             TextView timestampRowLabel = convertView.findViewById(R.id.timestampRowLabel);
+
+            if (Settings.get(getContext(), Settings.COLOR_SCORES_KEY)) {
+                assert row != null;
+                double percent = (row.getTotalInt() > 0)
+                        ? (double) row.getScoreInt() / row.getTotalInt() : 0;
+
+                int color;
+                if (percent > 0.75) {
+                    color = ContextCompat.getColor(getContext(), R.color.green);
+                } else if (percent > 0.5) {
+                    color = ContextCompat.getColor(getContext(), R.color.yellow);
+                } else {
+                    color = ContextCompat.getColor(getContext(), R.color.red);
+                }
+                scoreRowLabel.setTypeface(null, Typeface.BOLD);
+                scoreRowLabel.setTextColor(color);
+            } else {
+                // Reset to default text color when feature is off
+                scoreRowLabel.setTypeface(null, Typeface.NORMAL);
+                scoreRowLabel.setTextColor(
+                        ContextCompat.getColor(getContext(), R.color.black));
+            }
 
             quizNameRowLabel.setText(MainActivity.QUIZ);
             assert row != null;

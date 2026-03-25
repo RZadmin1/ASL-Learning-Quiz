@@ -30,4 +30,8 @@
     <string name="shuffle_questions">Shuffle Questions</string>
     <string name="progress_bar">Progress Bar</string>
     <string name="shuffle_note">* NOTE: In-progress quizzes cannot be shuffled/unshuffled!</string>
+    <string name="timestamp">Timestamp</string>
+    <string name="score">Score</string>
+    <string name="attempt">Attempt</string>
+    <string name="quiz_title">Quiz Title</string>
 </resources>
