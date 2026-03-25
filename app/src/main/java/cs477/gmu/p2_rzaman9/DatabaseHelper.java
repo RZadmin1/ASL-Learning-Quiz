@@ -339,7 +339,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long id = qCursor.getLong(qCursor.getColumnIndexOrThrow(_ID));
             String text = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[1]));
             String video = qCursor.getString(qCursor.getColumnIndexOrThrow(questionColumns[2]));
-            int orderNum = qCursor.getInt(qCursor.getColumnIndexOrThrow(questionColumns[3]));
             int correctIdx = qCursor.getInt(qCursor.getColumnIndexOrThrow(questionColumns[4]));
 
             // Get answers for this question in option order
@@ -357,7 +356,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             aCursor.close();
 
-            questions.add(new Question(id, orderNum, text, video, options, correctIdx));
+            questions.add(new Question(id, text, video, options, correctIdx));
         }
         qCursor.close();
         return questions;

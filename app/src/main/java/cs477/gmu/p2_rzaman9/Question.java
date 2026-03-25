@@ -6,17 +6,15 @@ public class Question {
 
     private final long id;
 
-    private final int originalOrder;
     private final String questionText;
     private final String videoName;
     private final List<String> options;
     private final int correctIndex;
 
     // Constructor
-    public Question(long id, int originalOrder, String questionText, String videoName,
+    public Question(long id, String questionText, String videoName,
                     List<String> options, int correctIndex) {
         this.id = id;
-        this.originalOrder = originalOrder;
         this.questionText = questionText;
         this.videoName = videoName;
         this.options = options;
@@ -25,7 +23,6 @@ public class Question {
 
     // Getters
     public long getId() { return id; }
-    public int getOrder() { return originalOrder; }
     public String getQuestionText() { return questionText; }
     public String getVideoName() { return videoName; }
     public List<String> getOptions() { return options; }

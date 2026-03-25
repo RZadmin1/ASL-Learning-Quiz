@@ -15,9 +15,4 @@ public class Settings {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(key, false);  // default off
     }
-
-    /*public static void set(Context context, String key, boolean value) {
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit().putBoolean(key, value).apply();
-    }*/
 }
