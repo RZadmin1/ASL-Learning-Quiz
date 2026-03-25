@@ -294,8 +294,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private int getQuestionCount(SQLiteDatabase db, long quizId) {
-        Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + QUESTIONS_TABLE +
-                " WHERE " + questionColumns[0] + "=?", new String[]{String.valueOf(quizId)});
+        Cursor c = db.query(QUESTIONS_TABLE,
+                new String[]{"COUNT(*)"},
+                questionColumns[0] + "=?",
+                new String[]{String.valueOf(quizId)},
+                null, null, null);
         int count = 0;
         if (c.moveToFirst()) count = c.getInt(0);
         c.close();
@@ -491,10 +494,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public int getSelectionCount(long quizId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery(
-                "SELECT COUNT(*) FROM " + SELECTIONS_TABLE +
-                        " WHERE " + selectionColumns[0] + "=?",
-                new String[]{String.valueOf(quizId)});
+        Cursor c = db.query(SELECTIONS_TABLE,
+                new String[]{"COUNT(*)"},
+                selectionColumns[0] + "=?",
+                new String[]{String.valueOf(quizId)},
+                null, null, null);
         int count = 0;
         if (c.moveToFirst()) count = c.getInt(0);
         c.close();
