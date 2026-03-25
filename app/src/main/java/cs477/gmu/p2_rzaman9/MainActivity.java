@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,11 +23,16 @@ public class MainActivity extends AppCompatActivity {
     // BUTTONS
     private Button resumeBtn;
 
+    // SETTINGS (Additional Feature settings elements)
+    private SettingsFragment settingsFragment;
+    private boolean settingsVisible = false;
+
     // QUIZ ATTEMPT (For transferring to Quiz activity)
     private QuizAttempt currentAttempt = null;
 
     // FOR SAVING VALUES DURING APP UPDATE/ROTATING & SENDING VIA INTENT
     public static final String QUIZ_ATTEMPT_KEY = "currentAttempt";
+    private static final String SETTINGS_KEY = "settingsVisible";
 
 
     private final String TAG = "MainActivity";  // For debugging/error messages
@@ -44,15 +50,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         resumeBtn = findViewById(R.id.resumeButton);
+        settingsFragment = (SettingsFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.settingsFragment);
+
+        if (settingsFragment != null) {
+            getSupportFragmentManager().beginTransaction().hide(settingsFragment).commit();
+        }
 
         if (savedInstanceState != null) {
             currentAttempt = (QuizAttempt)savedInstanceState.getSerializable(QUIZ_ATTEMPT_KEY);
+            settingsVisible = savedInstanceState.getBoolean(SETTINGS_KEY, false);
+            if (settingsVisible) {
+                getSupportFragmentManager().beginTransaction().show(settingsFragment).commit();
+            }
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(SETTINGS_KEY, settingsVisible);
         if (currentAttempt != null) {
             outState.putSerializable(QUIZ_ATTEMPT_KEY, currentAttempt);
         }
@@ -96,6 +113,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onSettingsButtonClicked(View view) {
+        if (settingsFragment == null) { return; }
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (settingsVisible) { transaction.hide(settingsFragment); }
+        else { transaction.show(settingsFragment); }
+
+        transaction.commit();
+        settingsVisible = !settingsVisible;
+    }
+
 
     // Helper Methods
     private void launchQuizActivity() {
@@ -109,9 +137,5 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
         currentAttempt = dbHelper.createNewAttempt();
         launchQuizActivity();
-    }
-    private void discardCurrentQuiz() {
-        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
-        // TODO (Maybe) ...
     }
 }

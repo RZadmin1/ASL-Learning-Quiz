@@ -24,4 +24,9 @@
     <string name="no_answer">(Not answered)</string>
     <string name="progress">Progress:</string>
     <string name="settings">Settings</string>
+    <string name="settings_title">Settings (Optional Features)</string>
+    <string name="_2x_video_speed">2x Video Speed</string>
+    <string name="color_coded_scores">Color-Coded Scores</string>
+    <string name="shuffle_questions">Shuffle Questions</string>
+    <string name="progress_bar">Progress Bar</string>
 </resources>

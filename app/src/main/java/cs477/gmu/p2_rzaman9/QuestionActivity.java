@@ -3,6 +3,7 @@ package cs477.gmu.p2_rzaman9;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,10 @@ public class QuestionActivity extends AppCompatActivity {
 
     // DB
     private DatabaseHelper dbHelper;
+
+    // SETTINGS (Togglable Features)
+    private boolean progressBarEnabled;
+    private boolean videoSpeedEnabled;
 
     // VIEWS (Host Layout)
     private VideoView videoView;
@@ -74,6 +79,7 @@ public class QuestionActivity extends AppCompatActivity {
         });
 
         dbHelper = DatabaseHelper.getInstance(this);
+        loadSettings();  // Load user preferences for togglable features
 
         videoView = findViewById(R.id.videoView);
         questionLabel = findViewById(R.id.questionLabel);
@@ -119,10 +125,11 @@ public class QuestionActivity extends AppCompatActivity {
         resultsButton.setOnClickListener(v -> finish());
 
         // Progress bar only visible when feature is enabled and not in review mode
-        boolean showProgress = Settings.get(this, Settings.PROGRESS_BAR_KEY);
-        progressLabel.setVisibility(!reviewMode && showProgress ? View.VISIBLE : View.INVISIBLE);
-        progressBar.setVisibility(!reviewMode && showProgress ? View.VISIBLE : View.INVISIBLE);
-        if (!reviewMode && showProgress) { updateProgressBar(); }
+        progressLabel.setVisibility((!reviewMode && progressBarEnabled)
+                ? View.VISIBLE : View.INVISIBLE);
+        progressBar.setVisibility((!reviewMode && progressBarEnabled)
+                ? View.VISIBLE : View.INVISIBLE);
+        if (!reviewMode && progressBarEnabled) { updateProgressBar(); }
 
 
         // Handle back button being pressed
@@ -194,7 +201,24 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
 
-    // PROGRESS BAR HELPER METHOD
+    // HELPER METHODS
+
+    private void loadSettings() {
+        SharedPreferences prefs = getSharedPreferences(
+                Settings.PREFS_NAME, Context.MODE_PRIVATE);
+        progressBarEnabled = prefs.getBoolean(Settings.PROGRESS_BAR_KEY, false);
+        videoSpeedEnabled = prefs.getBoolean(Settings.VIDEO_SPEED_KEY, false);
+    }
+
+    private void saveSettings() {
+        SharedPreferences prefs = getSharedPreferences(
+                Settings.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Settings.PROGRESS_BAR_KEY, progressBarEnabled);
+        editor.putBoolean(Settings.VIDEO_SPEED_KEY, videoSpeedEnabled);
+        editor.apply();
+    }
+
     private void updateProgressBar() {
         int answered = dbHelper.getSelectionCount(quizAttempt.getId());
         int total = questions.size();
@@ -214,7 +238,7 @@ public class QuestionActivity extends AppCompatActivity {
         savedSelections.put(questionId, optionIndex);
         dbHelper.saveSelection(quizAttempt.getId(), questionId, optionIndex);
         dbHelper.saveCurrentQuestion(quizAttempt.getId(), currentIndex + 1);
-        if (Settings.get(this, Settings.PROGRESS_BAR_KEY)) {
+        if (progressBarEnabled) {
             updateProgressBar();
         }
     }
@@ -264,6 +288,7 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        saveSettings();
         if (videoView != null) { videoView.pause(); }
     }
 
