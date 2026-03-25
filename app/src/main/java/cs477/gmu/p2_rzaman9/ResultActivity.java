@@ -27,10 +27,8 @@ import java.util.Map;
 public class ResultActivity extends AppCompatActivity {
 
     private QuizAttempt attempt;
-    private List<Question> questions;
-    private Map<Long, Integer> savedSelections;
 
-    class ResultRow {
+    static class ResultRow {
         public final int questionNum;
         public final String selectedAnswerText;
         public final boolean isCorrect;
@@ -45,7 +43,7 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-    class ResultAdapter extends ArrayAdapter<ResultRow> {
+    static class ResultAdapter extends ArrayAdapter<ResultRow> {
 
         public ResultAdapter(Context context, List<ResultRow> rows) {
             super(context, 0, rows);
@@ -94,13 +92,13 @@ public class ResultActivity extends AppCompatActivity {
         });
 
         attempt = (QuizAttempt)getIntent().getSerializableExtra(QuestionActivity.QUIZ_ATTEMPT_KEY);
-        if (attempt == null) { finish(); return; }
+        if (attempt == null) { finish(); return; }  // Should not reach this
 
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
 
         // Load questions and selections to build result rows
-        questions = dbHelper.getQuestionsForQuiz(attempt.getId());
-        savedSelections = dbHelper.loadSelections(attempt.getId());
+        List<Question> questions = dbHelper.getQuestionsForQuiz(attempt.getId());
+        Map<Long, Integer> savedSelections = dbHelper.loadSelections(attempt.getId());
 
         // Set score display
         TextView scoreDisplay = findViewById(R.id.scoreDisplay);
@@ -132,8 +130,11 @@ public class ResultActivity extends AppCompatActivity {
         resultListView.setAdapter(new ResultAdapter(this, rows));
 
         // Review button: relaunch QuestionActivity in review mode
-        Button reviewButton = findViewById(R.id.reviewQuestionsButton);
-        reviewButton.setOnClickListener(v -> goToReview(dbHelper, 1));
+        Button reviewBtn = findViewById(R.id.reviewQuestionsButton);
+        Button recordsBtn = findViewById(R.id.recordsButton);
+        reviewBtn.setOnClickListener(v -> goToReview(dbHelper, 1));
+        recordsBtn.setOnClickListener(v ->
+                startActivity(new Intent(this, RecordsActivity.class)));
 
         // Question List: relaunch QuestionActivity in review mode at desired question
         resultListView.setOnItemClickListener(

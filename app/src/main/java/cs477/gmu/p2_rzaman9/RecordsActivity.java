@@ -1,6 +1,7 @@
 package cs477.gmu.p2_rzaman9;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,6 @@ import java.util.List;
 public class RecordsActivity extends AppCompatActivity {
 
     private static final String TAG = "RecordsActivity";
-    private ListView recordsList;
     private RecordsAdapter adapter;
     private List<RecordRow> rows;
     private DatabaseHelper dbHelper;
@@ -44,8 +44,9 @@ public class RecordsActivity extends AppCompatActivity {
         });
 
         dbHelper = DatabaseHelper.getInstance(this);
-        recordsList = findViewById(R.id.recordsList);
-        Button deleteAllButton = findViewById(R.id.deleteAllButton);
+        ListView recordsList = findViewById(R.id.recordsList);
+        Button deleteAllBtn = findViewById(R.id.deleteAllButton);
+        Button returnHomeBtn = findViewById(R.id.recordsHomeButton);
 
         rows = new ArrayList<>();
         adapter = new RecordsAdapter(this, rows);
@@ -69,7 +70,7 @@ public class RecordsActivity extends AppCompatActivity {
         });
 
         // Deleting all records
-        deleteAllButton.setOnClickListener(v -> {
+        deleteAllBtn.setOnClickListener(v -> {
             if (rows.isEmpty()) {
                 Toast.makeText(this, "No records to delete.", Toast.LENGTH_SHORT).show();
                 return;
@@ -84,6 +85,10 @@ public class RecordsActivity extends AppCompatActivity {
                     .setNegativeButton("Cancel", null)
                     .show();
         });
+
+        // Returning to MainActivity
+        returnHomeBtn.setOnClickListener(v ->
+                startActivity(new Intent(this, MainActivity.class)));
     }
 
     @Override
@@ -103,7 +108,7 @@ public class RecordsActivity extends AppCompatActivity {
 
 
     // ADAPTER
-    private class RecordsAdapter extends ArrayAdapter<RecordRow> {
+    private static class RecordsAdapter extends ArrayAdapter<RecordRow> {
         public RecordsAdapter(Context context, List<RecordRow> rows) {
             super(context, 0, rows);
         }

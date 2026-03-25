@@ -55,6 +55,6 @@ public class SettingsFragment extends Fragment {
 
         // X button closes the settings panel
         view.findViewById(R.id.settingsExitButton).setOnClickListener(v ->
-                ((MainActivity) requireActivity()).onSettingsButtonClicked(v));
+                ((MainActivity)requireActivity()).onSettingsButtonClicked(v));
     }
 }

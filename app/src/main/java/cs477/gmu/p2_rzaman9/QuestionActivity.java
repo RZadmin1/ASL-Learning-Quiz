@@ -41,7 +41,6 @@ public class QuestionActivity extends AppCompatActivity {
     private TextView questionLabel;
     private TextView progressLabel;
     private ProgressBar progressBar;
-    private Button resultsButton;
 
     private AlertDialog currentDialog;
 
@@ -86,7 +85,7 @@ public class QuestionActivity extends AppCompatActivity {
         questionLabel = findViewById(R.id.questionLabel);
         progressLabel = findViewById(R.id.progressLabel);
         progressBar = findViewById(R.id.progressBar);
-        resultsButton = findViewById(R.id.resultsButton);
+        Button resultsBtn = findViewById(R.id.resultsButton);
 
         // Get QuizAttempt passed from MainActivity (OR ResultActivity/RecordsActivity for review)
         quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(MainActivity.QUIZ_ATTEMPT_KEY);
@@ -122,8 +121,8 @@ public class QuestionActivity extends AppCompatActivity {
 
 
         // Only show resultsButton review mode
-        resultsButton.setVisibility(reviewMode ? View.VISIBLE : View.INVISIBLE);
-        resultsButton.setOnClickListener(v -> finish());
+        resultsBtn.setVisibility(reviewMode ? View.VISIBLE : View.INVISIBLE);
+        resultsBtn.setOnClickListener(v -> finish());
 
         // Progress bar only visible when feature is enabled and not in review mode
         progressLabel.setVisibility((!reviewMode && progressBarEnabled)
