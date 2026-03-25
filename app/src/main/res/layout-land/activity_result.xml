@@ -55,14 +55,14 @@
         android:text="@string/review_questions"
         app:layout_constraintEnd_toEndOf="@id/resultsTitle"
         app:layout_constraintStart_toStartOf="@id/resultsTitle"
-        app:layout_constraintBottom_toTopOf="@id/questionHomeButton" />
+        app:layout_constraintBottom_toTopOf="@id/recordsButton" />
 
-    <Button android:id="@+id/questionHomeButton"
+    <Button android:id="@+id/recordsButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:textSize="24sp"
-        android:text="@string/return_to_home_screen"
+        android:text="@string/view_records"
         app:layout_constraintEnd_toEndOf="@id/resultsTitle"
         app:layout_constraintStart_toStartOf="@id/resultsTitle"
         app:layout_constraintBottom_toBottomOf="parent" />
