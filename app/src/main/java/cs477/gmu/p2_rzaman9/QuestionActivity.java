@@ -3,14 +3,12 @@ package cs477.gmu.p2_rzaman9;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -19,12 +17,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +33,9 @@ public class QuestionActivity extends AppCompatActivity {
     // VIEWS (Host Layout)
     private VideoView videoView;
     private TextView questionLabel;
+    private TextView progressLabel;
+    private ProgressBar progressBar;
+    private Button resultsButton;
 
     private AlertDialog currentDialog;
 
@@ -75,8 +74,12 @@ public class QuestionActivity extends AppCompatActivity {
         });
 
         dbHelper = DatabaseHelper.getInstance(this);
+
         videoView = findViewById(R.id.videoView);
         questionLabel = findViewById(R.id.questionLabel);
+        progressLabel = findViewById(R.id.progressLabel);
+        progressBar = findViewById(R.id.progressBar);
+        resultsButton = findViewById(R.id.resultsButton);
 
         // Get QuizAttempt passed from MainActivity (OR ResultActivity/RecordsActivity for review)
         quizAttempt = (QuizAttempt)getIntent().getSerializableExtra(MainActivity.QUIZ_ATTEMPT_KEY);
@@ -109,6 +112,18 @@ public class QuestionActivity extends AppCompatActivity {
 
         // Display current question
         displayQuestion(currentIndex);
+
+
+        // Only show resultsButton review mode
+        resultsButton.setVisibility(reviewMode ? View.VISIBLE : View.INVISIBLE);
+        resultsButton.setOnClickListener(v -> finish());
+
+        // Progress bar only visible when feature is enabled and not in review mode
+        boolean showProgress = Settings.get(this, Settings.PROGRESS_BAR_KEY);
+        progressLabel.setVisibility(!reviewMode && showProgress ? View.VISIBLE : View.INVISIBLE);
+        progressBar.setVisibility(!reviewMode && showProgress ? View.VISIBLE : View.INVISIBLE);
+        if (!reviewMode && showProgress) { updateProgressBar(); }
+
 
         // Handle back button being pressed
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
@@ -179,11 +194,29 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
 
+    // PROGRESS BAR HELPER METHOD
+    private void updateProgressBar() {
+        int answered = dbHelper.getSelectionCount(quizAttempt.getId());
+        int total = questions.size();
+
+        progressBar.setMax(total);
+        progressBar.setProgress(answered);
+
+        int percent = (total > 0) ? (answered * 100 / total) : 0;  // Safeguard against 0-division
+        progressLabel.setText(String.format(
+                Locale.US, "%s %d%%", getString(R.string.progress), percent));
+    }
+
+
     // FRAGMENT HELPER METHODS
 
     public void onAnswerSelected(long questionId, int optionIndex) {
         savedSelections.put(questionId, optionIndex);
         dbHelper.saveSelection(quizAttempt.getId(), questionId, optionIndex);
+        dbHelper.saveCurrentQuestion(quizAttempt.getId(), currentIndex + 1);
+        if (Settings.get(this, Settings.PROGRESS_BAR_KEY)) {
+            updateProgressBar();
+        }
     }
 
     public void onPrevClicked() {

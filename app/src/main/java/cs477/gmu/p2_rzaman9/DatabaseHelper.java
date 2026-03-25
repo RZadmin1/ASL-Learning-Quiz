@@ -476,4 +476,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(RECORDS_TABLE, null, null);
     }
+
+    /**
+     * Get the number of questions that the user has answered in the quiz from the database.
+     * @param quizId The ID of the quiz to check for
+     * @return The number of selections made in the quiz
+     */
+    public int getSelectionCount(long quizId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT COUNT(*) FROM " + SELECTIONS_TABLE +
+                        " WHERE " + selectionColumns[0] + "=?",
+                new String[]{String.valueOf(quizId)});
+        int count = 0;
+        if (c.moveToFirst()) count = c.getInt(0);
+        c.close();
+        return count;
+    }
 }
